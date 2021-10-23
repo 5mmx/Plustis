@@ -1,0 +1,160 @@
+#Plustis-API
+
+options:
+    version: 0.2
+    logs: 720632649684877413
+
+#send "[**%arg-2%**] Executed:" to channel with id "{@logs}" with "MainBot"
+
+command /api:
+    trigger:
+        send "===="
+        send "Plustis-API"
+        send "Version: {@version}"
+        send "===="
+        send formatted "More info: <url:http://plustis.xyz/API.html>&bhttp://plustis.xyz/api<reset>"
+        send "===="
+
+command /api_debug <text>:
+    trigger:
+        send "%{%arg-1%.code.world}%"
+
+command /api_bc <text> <text>:
+    permission: api.command
+    trigger:
+        send "[**%arg-1%**] Executed: $api_bc" to channel with id "{@logs}" with "MainBot"
+        loop all players:
+            if loop-player's world is "%{%arg-1%.code.world}%":
+                send "%colored arg-2%" to loop-player
+
+command /api_rank <text> <player> <text>:
+    permission: api.command
+    trigger:
+        send "[**%arg-1%**] Executed: $api_rank" to channel with id "{@logs}" with "MainBot"
+        if {plugin.luckperms.%{%arg-1%.code.world}%} is "Installed":
+            if arg-3 is "padmin", "psrmod", "pmod", "pjrmod", "default", "pcust1", "pcust2", "pcust3", "pcust4", "pcust5" or "pcust6":
+                make console execute command "/lp user %arg-2% parent unset padmin world=%{%arg-1%.code.world}%"
+                make console execute command "/lp user %arg-2% parent unset psrmod world=%{%arg-1%.code.world}%"
+                make console execute command "/lp user %arg-2% parent unset pjrmod world=%{%arg-1%.code.world}%"
+                make console execute command "/lp user %arg-2% parent unset pmod world=%{%arg-1%.code.world}%"
+                make console execute command "/lp user %arg-2% parent unset pcust1 world=%{%arg-1%.code.world}%"
+                make console execute command "/lp user %arg-2% parent unset pcust2 world=%{%arg-1%.code.world}%"
+                make console execute command "/lp user %arg-2% parent unset pcust3 world=%{%arg-1%.code.world}%"
+                make console execute command "/lp user %arg-2% parent unset pcust4 world=%{%arg-1%.code.world}%"
+                make console execute command "/lp user %arg-2% parent unset pcust5 world=%{%arg-1%.code.world}%"
+                make console execute command "/lp user %arg-2% parent unset pcust6 world=%{%arg-1%.code.world}%"
+                wait 3 seconds seconds
+                make console execute command "/lp user %arg-2% parent set %arg-3% world=%{%arg-1%.code.world}%"       
+                set {rank.%arg-2%.%{%arg-1%.code.world}%} to arg-3
+                send "&aRank set!" to player
+
+command /api_sudo <text> <player> <text>:
+    permission: api.command
+    trigger:
+        send "[**%arg-1%**] Executed: $api_sudo" to channel with id "{@logs}" with "MainBot"
+        if arg-2's world is "%{%arg-1%.code.world}%":
+            if arg-2 has permission "admin.rank":
+                stop
+            else:
+                make arg-2 execute command "/%arg-3%"
+
+command /api_msg <text> <player> <text>:
+    permission: api.command
+    trigger:
+        send "[**%arg-1%**] Executed: $api_msg" to channel with id "{@logs}" with "MainBot"
+        if arg-2's world is "%{%arg-1%.code.world}%":
+            send "%colored arg-3%" to arg-2
+
+command /api_plugin <text> <text> <text>:
+    permission: api.command
+    trigger:
+        send "[**%arg-1%**] Executed: $api_plugin" to channel with id "{@logs}" with "MainBot"
+        if arg-2 is "Install":
+            set {plugin.%arg-3%.%{%arg-1%.code.world}%} to "Installed"
+        if arg-2 is "Uninstall":
+            set {plugin.%arg-3%.%{%arg-1%.code.world}%} to "Not Installed"
+
+command /api_kick <text> <player> <text>:
+    permission: api.command
+    trigger:
+        send "[**%arg-1%**] Executed: $api_kick" to channel with id "{@logs}" with "MainBot"
+        if arg-2's world is "%{%arg-1%.code.world}%":
+            make console execute command "sudo %arg-2% lobby"
+            send "&aYou have been kicked from this server. Reason: %arg-3%" to arg-2
+
+command /api_kill <text> <player>:
+    permission: api.command
+    trigger:
+        send "[**%arg-1%**] Executed: $api_kill" to channel with id "{@logs}" with "MainBot"
+        if arg-2's world is "%{%arg-1%.code.world}%":
+            make console execute command "minecraft:kill %arg-2%"
+
+command /api_killall <text>:
+    permission: api.command
+    trigger:
+        send "[**%arg-1%**] Executed: $api_killall" to channel with id "{@logs}" with "MainBot"
+        loop all players:
+            if loop-player's world is "%{%arg-1%.code.world}%":
+                make console execute command "minecraft:kill %loop-player%"
+
+command /api_start <text>:
+    permission: api.command
+    trigger:
+        send "[**%arg-1%**] Executed: $api_start" to channel with id "{@logs}" with "MainBot"
+        if {service.phost} is "Online":
+            if {suspended.%{%arg-1%.code.world}%} is "true":
+                #
+            else:
+                if {nserver_online} >= 27:
+                    #
+                else:
+                    make console execute command "hv load %{%arg-1%.code.world}%"
+                    wait 3 seconds
+                    make console execute command "hv load %{%arg-1%.code.world}%_nether"
+                    wait 3 seconds
+                    make console execute command "hv load %{%arg-1%.code.world}%_the_end"
+                    set {status.%{%arg-1%.code.world}%} to "Online"
+                    clear {console.%{%arg-1%.code.world}%::*}
+                    wait 0.2 seconds
+                    add "[Recived WebHook Start Request]" to {console.%{%arg-1%.code.world}%::*}
+                    add "WebHook Type = Plustis-API" to {console.%{%arg-1%.code.world}%::*}
+                    add "Starting Realm..." to {console.%{%arg-1%.code.world}%::*}
+                    add "Loading gamerules..." to {console.%{%arg-1%.code.world}%::*}
+                    add "Loading plugins..." to {console.%{%arg-1%.code.world}%::*}
+                    add "Realm started!" to {console.%{%arg-1%.code.world}%::*}
+
+command /api_stop <text>:
+    permission: api.command
+    trigger:
+        send "[**%arg-1%**] Executed: $api_stop" to channel with id "{@logs}" with "MainBot"
+        make console execute command "kickallplayers %{%arg-1%.code.world}%"
+        make console execute command "kickallplayers %{%arg-1%.code.world}%_nether"
+        make console execute command "kickallplayers %{%arg-1%.code.world}%_the_end"
+        set {24_7_%{owner.%{%arg-1%.code.world}%}%} to "off"
+        set {24_7_%{%arg-1%.code.world}%} to "false"
+        add "[Recived WebHook Stop Request]" to {console.%{%arg-1%.code.world}%::*}
+        add "WebHook Type = Plustis-API" to {console.%{%arg-1%.code.world}%::*}
+        add "Stopping Realm..." to {console.%{%arg-1%.code.world}%::*}
+        add "Unoading gamerules..." to {console.%{%arg-1%.code.world}%::*}
+        add "Unloading plugins..." to {console.%{%arg-1%.code.world}%::*}
+        add "Realm stopped!" to {console.%{%arg-1%.code.world}%::*}
+        make console execute command "hv unload %{%arg-1%.code.world}%"
+        wait 3 seconds
+        make console execute command "hv unload %{%arg-1%.code.world}%_nether"
+        wait 3 seconds
+        make console execute command "hv unload %{%arg-1%.code.world}%_the_end"
+        set {status.%{%arg-1%.code.world}%} to "Offline"
+        set {latest.log.%{%arg-1%.code.world}%::*} to {console.%{%arg-1%.code.world}%::*}
+
+command /api_24_7 <text> <text>:
+    permission: api.command
+    trigger:
+        if {status.%{%arg-1%.code.world}%} is "Online":
+            if {rank.%{owner.%{%arg-1%.code.world}%}%} is "&a[VIP]", "&b[PRO]", "&6[LEGEND]", "&d[BUILDER]", "&a[HELPER]", "&e[JR.MOD]", "&e[MOD]", "&6[SR.MOD]", "&c[ADMIN]", "&d[MANAGER]", "&b[CO-OWNER]" or "&4[OWNER]":
+                send "[**%arg-1%**] Executed: $api_24/7" to channel with id "{@logs}" with "MainBot"
+                if arg-2 is "true":
+                    set {24_7_p_%{owner.%{%arg-1%.code.world}%}%} to "on"
+                    set {24_7_%{%arg-1%.code.world}%} to "true"
+                if arg-2 is "false":
+                    set {24_7_p_%{owner.%{%arg-1%.code.world}%}%} to "off"
+                    set {24_7_%{%arg-1%.code.world}%} to "false"
