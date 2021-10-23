@@ -1,0 +1,115 @@
+#Support
+
+command /support:
+    trigger:
+        wait 0.3 seconds
+        open chest with 2 row named "&6Support" to player
+        format slot 13 of player with compass named "&cClose" to close
+        format slot 2 of player with arrow named "&aHelp Center" with lore "&3Plustis Help Center" to close then run [make player execute command "/helpcenter"]
+        format slot 4 of player with paper named "&aBot Support" with lore "&3Ask for help to our support bot" to close then run [make player execute command "/?support_ai"]
+        format slot 6 of player with book named "&1Discord Support" with lore "&3Ask for help to our support team on Discord" to close then run [make player execute command "/discord"]
+
+command /helpcenter:
+    trigger:
+        send formatted "&3Help Center: <url:http://support.plustis.xyz/>&bhttp://support.plustis.xyz/<reset>"
+
+options:
+    name: PlustixAI
+
+command /?support_ai:
+    trigger:
+        wait 0.3 seconds
+        send "  " to player
+        send "  " to player
+        send "  " to player
+        send "  " to player
+        send "&aStarting chat, please wait..." to player
+        wait 3 seconds
+        send "  " to player
+        send "&b{@name}&r: &3Hello! I am {@name}, Plustis Support Bot!" to player
+        send "  " to player
+        send "&b{@name}&r: &3Please type /supportchat <text> to start the conversation" to player
+        send "  " to player
+        send "&b{@name}&r: &3Try asking me a question, please try to be as clear as possible and spell correctly, thanks!"
+        send "  " to player
+        send "&b{@name}&r: &3In case you need more help, you can contact humans on our discord (/discord)"
+
+command /supportchat <string>:
+    trigger:
+        wait 1 second
+        set {supportart.%player%} to 0
+        send "  " to player
+        if arg-1 contains "realm", "server", "create", "make" or "world":
+            add 1 to {supportart.%player%}
+            send formatted "&b{@name}&r: &3This might help you: <command:/?support_art 1 %player%>&bHow to Create a Realm [Click Here]<reset>" to player
+        if arg-1 contains "join", "enter" or "play":
+            add 1 to {supportart.%player%}
+            send formatted "&b{@name}&r: &3This might help you: <command:/?support_art 2 %player%>&bHow to Join/Play on Your Realm [Click Here]<reset>" to player
+        if arg-1 contains "edit", "options" or "settings":
+            add 1 to {supportart.%player%}
+            send formatted "&b{@name}&r: &3This might help you: <command:/?support_art 3 %player%>&bHow to Edit Your Realm's Settings [Click Here]<reset>" to player
+        if arg-1 contains "plugins", "install" or "uninstall":
+            add 1 to {supportart.%player%}
+            send formatted "&b{@name}&r: &3This might help you: <command:/?support_art 4 %player%>&bHow to Use Plugins [Click Here]<reset>" to player
+        if arg-1 contains "gamemode", "gm", "creative", "survival", "adventure" or "spectator":
+            add 1 to {supportart.%player%}
+            send formatted "&b{@name}&r: &3This might help you: <command:/?support_art 5 %player%>&bHow to Change Your Gamemode [Click Here]<reset>" to player
+        if arg-1 contains "tutorial", "tut" or "help":
+            add 1 to {supportart.%player%}
+            send formatted "&b{@name}&r: &3This might help you: <command:/tutorial>&bPlustis Tutorial [Click Here]<reset>" to player
+        if arg-1 contains "rules", "rule" or "regulamentation":
+            add 1 to {supportart.%player%}
+            send formatted "&b{@name}&r: &3This might help you: <command:/rules>&bPlustis Rules [Click Here]<reset>" to player
+        if arg-1 contains "discord", "disc" or "dizzy":
+            add 1 to {supportart.%player%}
+            send formatted "&b{@name}&r: &3This might help you: <command:/discord>&bPlustis Discord [Click Here]<reset>" to player
+        if arg-1 contains "web", "website", "forum" or "forumz":
+            add 1 to {supportart.%player%}
+            send formatted "&b{@name}&r: &3This might help you: <command:/website>&bPlustis Website/Forums [Click Here]<reset>" to player
+        if arg-1 contains "Shop", "rank", "perms" or "tag":
+            add 1 to {supportart.%player%}
+            send formatted "&b{@name}&r: &3This might help you: <command:/shop>&bPlustis Shop [Click Here]<reset>" to player
+        if arg-1 contains "icon", "logo", "Browser":
+            add 1 to {supportart.%player%}
+            send formatted "&b{@name}&r: &3This might help you: <command:/?support_art 6 %player%>&bRealm Icons [Click Here]<reset>" to player
+
+
+        send "&aFound &b%{supportart.%player%}% &aArticles that Might help you"
+        send "&cStill need help? Try asking again your question by changing the words, or contact humans on our discord (/discord)"
+
+command /?support_art <number> <player>:
+    trigger:
+        if arg-1 is 1:
+            send "&bHow to Create a Realm" to arg-2
+            send "&31) Type /create <Realm Name> (Please check /rules for Realm name rules!)" to arg-2
+            send "&32) Select your Realm's world type from the GUI menu" to arg-2
+            send "&33) Wait for the Realm creation process to finish" to arg-2
+            send "&34) You have now created a Realm. Please start it from Menu > Control Panel" to arg-2
+            send "&35) You can now join your realm with /join <realm name>" to arg-2
+        if arg-1 is 2:
+            send "&bHow to Join/Play on Your Realm" to arg-2
+            send "&31) Go in the Lobby Menu > Control Panel and start your Realm" to arg-2
+            send "&32) Wait for the starting process to finish" to arg-2
+            send "&33) You can now join your Realm by typing /join <realm name>" to arg-2
+        if arg-1 is 3:
+            send "&bHow to Edit Your Realm's Settings" to arg-2
+            send "&31) Go in the Lobby Menu > Control Panel and click on the Settings option" to arg-2
+            send "&32) More settings are available by doing /control while you are in your Realm" to arg-2
+        if arg-1 is 4:
+            send "&bHow to Use Plugins" to arg-2
+            send "&31) Go in your Realm and type /control" to arg-2
+            send "&32) Click on Plugins" to arg-2
+            send "&33) Click on any plugin to install/uninstall it" to arg-2
+            send "&34) Use /help <plugin name> for help" to arg-2
+        if arg-1 is 5:
+            send "&bHow to Change Your Gamemode" to arg-2
+            send "&31) Go in your Realm and install the plugin Essentials" to arg-2
+            send "&32) Type /gmc for creative, /gms for survival, /gma for adventure" to arg-2
+            send formatted "&3This might also help you: <command:/?support_art 4 %player%>&bHow to Use Plugins [Click Here]<reset>" to player
+        if arg-1 is 6:
+            send "&bHow to Change Your Realm Icon" to arg-2
+            send "&31) Go in your Realm settings" to arg-2
+            send "&32) Click Realm Browser settings" to arg-2
+            send "&33) Click icon" to arg-2
+            send "&34) Change your icon" to arg-2
+            send formatted "&3This might also help you: <command:/?support_art 3 %player%>&bHow to Edit Your Realm's Settings [Click Here]<reset>" to player
