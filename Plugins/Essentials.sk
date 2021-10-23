@@ -1,0 +1,312 @@
+#Essentials
+
+command /installp_essentials:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.essentials.%player's world%} to "Installed"
+            send "&3Plugin &bEssentials &3installed"
+            make console execute command "lp user %player% parent add pluginessentials world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /uninstallp_essentials:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.essentials.%player's world%} to "Not Installed"
+            send "&3Plugin &bEssentials &3uninstalled"
+            make console execute command "lp user %player% parent remove pluginessentials world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /gmc [<player>]:
+    permission: gmc.essentialspl
+    trigger:
+        if {plugin.essentials.%player's world%} is "Installed":
+            if arg-1 is not set:
+                make console execute command "minecraft:gamemode creative %player%"
+                send "&3Gamemode set to &bCreative"
+            else:
+                if arg-1's world is "%player's world%":
+                    make console execute command "minecraft:gamemode creative %arg-1%"
+                    send "&3Gamemode set to &bCreative"
+        else:
+            send "&3Install &bessentials &3to use this command!"
+
+command /gms [<player>]:
+    permission: gms.essentialspl
+    trigger:
+        if {plugin.essentials.%player's world%} is "Installed":
+            if arg-1 is not set:
+                make console execute command "minecraft:gamemode survival %player%"
+                send "&3Gamemode set to &bSurvival"
+            else:
+                if arg-1's world is "%player's world%":
+                    make console execute command "minecraft:gamemode survival %arg-1%"
+                    send "&3Gamemode set to &bSurvival"
+        else:
+            send "&3Install &bessentials &3to use this command!"
+
+command /gma [<player>]:
+    permission: gma.essentialspl
+    trigger:
+        if {plugin.essentials.%player's world%} is "Installed":
+            if arg-1 is not set:
+                make console execute command "minecraft:gamemode adventure %player%"
+                send "&3Gamemode set to &bAdventure"
+            else:
+                if arg-1's world is "%player's world%":
+                    make console execute command "minecraft:gamemode adventure %arg-1%"
+                    send "&3Gamemode set to &bAdventure"
+        else:
+            send "&3Install &bessentials &3to use this command!"
+
+command /gmsp [<player>]:
+    permission: gmsp.essentialspl
+    trigger:
+        if {plugin.essentials.%player's world%} is "Installed":
+            if arg-1 is not set:
+                make console execute command "minecraft:gamemode spectator %player%"
+                send "&3Gamemode set to &bSpectator"
+            else:
+                if arg-1's world is "%player's world%":
+                    make console execute command "minecraft:gamemode spectator %arg-1%"
+                    send "&3Gamemode set to &bSpectator"
+        else:
+            send "&3Install &bessentials &3to use this command!"
+
+command /sethome:
+    permission: sethome.essentialspl
+    trigger:
+        send "&aSetting home..."
+        make console execute command "/lp user %player% permission set essentials.setwarp world=%player's world%"
+        wait 1 second
+        make console execute command "supersudo %player% /essentials:setwarp %player's world%_home_%player%"
+        add "%player's world%_home_%player%" to {warps.essentials.%player's world%::*} 
+        wait 1 second
+        make console execute command "/lp user %player% permission unset essentials.setwarp world=%player's world%"
+        send "&3Home set to your current location"
+
+command /home:
+    permission: home.essentialspl
+    trigger:
+        make console execute command "essentials:warp %player's world%_home_%player% %player%"
+        send "&3Teleported to your home location"
+
+command /delhome:
+    permission: delhome.essentialspl
+    trigger:
+        make console execute command "essentials:delwarp %player's world%_home_%player% %player%"
+        send "&cHome deleted!"
+
+command /invsee [<player>]:
+    permission: invsee.essentialspl
+    trigger: 
+        if {plugin.essentials.%player's world%} is "Installed":
+            if arg 1 is not set:
+                send "&cUsage /invsee <player>"
+            else:
+                if arg-1's world is "%player's world%":
+                    open the arg-1's inventory for the player
+
+command /pkick <player> <text>:
+    permission: kick.essentialspl
+    trigger:
+        make arg-1 execute command "/lobby"
+        send "&aKicked &b%arg-1% &afor reason: &b%arg-2%" to player
+        send "&cYou have been kicked: &r%arg-2%" to arg-1
+
+command /pban <offline player> <text>:
+    usage: /pban <player> <reason>
+    permission: ban.essentialspl
+    trigger:
+        if {server.name.%arg-1%} is "%player's world%":
+            send "&cYou can't ban the server owner!"
+        else:
+            add arg-1 to {Banned.%player's world%::*}
+            send "&aBanned &b%arg-1%" to player
+            if arg-1 is online:
+                make arg-1 execute command "/lobby"
+                send "&cYou have been banned! Reason: &r%arg-2%" to arg-1
+            else:
+                stop
+
+command /punban <offline player>:
+    permission: unban.essentialspl
+    trigger:
+        remove arg-1 from {Banned.%player's world%::*}
+        send "&aUnbanned &b%arg-1%" to player
+        send "&aYou have been unbanned from &b%player's world%" to arg-1
+
+command /bc <text>:
+    permission: bc.essentialspl
+    trigger:
+        broadcast "&a%colored arg-1%" to player's world
+
+command /day:
+    permission: day.essentialspl
+    trigger:
+        set time to day
+        send "&aTime set to &bDAY"
+        
+command /night:
+    permission: night.essentialspl
+    trigger:
+        set time to night
+        send "&aTime set to &bNIGHT"
+
+command /sun:
+    permission: sun.essentialspl
+    trigger:
+        set weather to sun
+        send "&aWeather set to &bSUN"
+
+command /rain:
+    permission: rain.essentialspl
+    trigger:
+        set weather to rain
+        send "&aWeather set to &bRAIN"
+
+command /thunder:
+    permission: thunder.essentialspl
+    trigger:
+        set weather to thunder
+        send "&aWeather set to &bTHUNDER"
+
+command /peffect <text> <player> [<text>] [<text>] [<text>]:
+    permission: effect.essentialspl
+    trigger:
+        if arg-1 is "give":
+            if arg-2 is set:
+                if arg-3 is set:
+                    if arg-2's world is "%player's world%":
+                        send "&aApplied effect &b%arg-3% &ato &b%arg-2%&a!"
+                        make console execute command "effect give %arg-2% %arg-3% %arg-4% %arg-5%"
+                    else:
+                        send "&cThis player is not online in this server!"
+                else:
+                    send "&cUsage: /peffect <give/clear> <player> [effect] [time] [amplifier]"
+            else:
+                send "&cUsage: /peffect <give/clear> <player> [effect] [time] [amplifier]"
+        if arg-1 is "clear":
+            if arg-2 is set:
+                make console execute command "effect clear %arg-2%"
+            else:
+                send "&cUsage: /peffect <give/clear> <player> [effect] [time] [amplifier]"
+
+command /tp <player> [<player>]:
+    permission: tp.essentialspl
+    trigger:
+        if arg-1's world is "%player's world%":
+            if arg-2 is set:
+                if arg-2's world is "%player's world%":
+                    teleport arg-1 to arg-2
+                    send "&aTeleported &b%arg-1% &ato &b%arg-2%"
+                else:
+                    send "&b%arg-2% &cis not in this server!"
+            else:
+                teleport player to arg-1
+                send "&aTeleported to &b%arg-1%"
+        else:
+            send "&b%arg-1% &cis not in this server!"
+
+command /tphere <player>:
+    permission: tphere.essentialspl
+    trigger:
+        if arg-1's world is "%player's world%":
+            teleport arg-1 to player
+        else:
+            send "&b%arg-1% &cis not in this server!"
+
+command /kill [<player>]:
+    permission: kill.essentialspl
+    trigger:
+        if arg-1 is set:
+            if arg-1's world is "%player's world%":
+                make console execute command "minecraft:kill %arg-1%"
+                send "&aKilled &b%arg-1%"
+            else:
+                send "&b%arg-1% &cis not online in this server!"
+        else:
+            make console execute command "minecraft:kill %player%"
+            send "&aKilled &b%player%"
+
+command /killall:
+    permission: killall.essentialspl
+    trigger:
+        loop all players:
+            if loop-player's world is "%player's world%":
+                make console execute command "minecraft:kill %loop-player%"
+        send "&aKilled all players"
+
+command /tpa <player>:
+    permission: tpa.essentialspl
+    trigger:
+        if arg-1's world is "%player's world%":
+            set {essentials.tpa.%argument 1%} to player
+            send " &e%{essentials.tpa.%argument 1%}% would like to tp to you." to arg-1
+            send "&eType &b/tpaccept &eto accept" to arg-1
+            send "&eType &b/tpdeny &eto deny" to arg-1
+            message "&eYour request has been sent" to player
+        else:
+            send "&cThis player is not in the same server!"
+
+command /tpaccept:
+    permission: tpaccept.essentialspl
+    trigger:
+        if {essentials.tpa.%player%} exists:
+            teleport {essentials.tpa.%player%} to location of player
+            send "&e&l%player% was teleported to you" to player 
+            send "&e&lYou were teleported to %{essentials.tpa.%player%}%" to {essentials.tpa.%player%} 
+            delete {essentials.tpa.%player%} 
+        else:
+            message "&eyou do not have any pending request" to player 
+
+command /tpdeny:
+    permission: tpdeny.essentialspl
+    trigger:
+        if {essentials.tpa.%player%} exists:
+            send "&e&lYour request was &c&ldeclined" to {essentials.tpa.%player%} 
+            delete {essentials.tpa.%player%} 
+        else:
+            message "&eyou do not have any pending request" to player 
+			
+			
+on disconnect:
+	delete {essentials.tpa.%player%} 
+	
+every 30 seconds:
+	loop all players:
+		if {essentials.tpa.%loop-player%} exists:
+			send "&aTeleport request expired" to loop-player 
+			delete {essentials.tpa.%loop-player%}
+
+command /pwarn <player> <text>:
+    permission: warn.essentialspl
+    trigger:
+        if arg-1 is "%{owner.%player's world%}%":
+            send "&cYou can't warn this player!"
+        else:
+            add 1 to {warns.%arg-1%.%player's world%}
+            broadcast "&b%player% &ahas warned &b%arg-1% &afor: &b%arg-2% &3[%{warns.%arg-1%.%player's world%}%/3]" to player's world
+            if {warns.%arg-1%.%player's world%} is 3:
+                set {warns.%arg-1%.%player's world%} to 0
+                add arg-1 to {Banned.%player's world%::*}
+                send "&aBanned &b%arg-1%" to player
+                send "&cYou have been banned! Reason: &rYou got 3 warns!" to arg-1
+                make arg-1 execute command "/lobby"
+
+command /pwarn-reset <player>:
+    permission: warn.essentialspl
+    trigger:
+        set {warns.%arg-1%.%player's world%} to 0
+        send "&aWarns reset for &b%arg-1%"
+
+command /tocord <text> <text> <text>:
+    permission: tocord.essentialspl
+    usage: /tocord <x> <y> <z>
+    trigger:
+        make console execute command "/lp user %player% permission set essentials.tppos world=%player's world%"
+        wait 2 second
+        make player execute command "/tppos %arg-1% %arg-2% %arg-3%"
+        wait 1 second
+        make console execute command "/lp user %player% permission unset essentials.tppos world=%player's world%"

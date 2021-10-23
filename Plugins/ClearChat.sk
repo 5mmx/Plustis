@@ -1,0 +1,26 @@
+#ClearChat
+
+command /installp_clearchat:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.clearchat.%player's world%} to "Installed"
+            send "&3Plugin &bClearChat &3installed"
+            make console execute command "/lp user %player% permission set clearchat.use.plugin world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+ 
+command /uninstallp_clearchat:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.clearchat.%player's world%} to "Not Installed"
+            send "&3Plugin &bClearChat &3uninstalled"
+            make console execute command "/lp user %player% permission unset clearchat.use.plugin world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /clearchat:
+    permission: clearchat.use.plugin
+    trigger:
+        loop 100 times:
+            broadcast " " to player's world
+        send "&3Chat cleared by &b%player%"

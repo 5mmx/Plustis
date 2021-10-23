@@ -1,0 +1,777 @@
+#Slipt
+
+command /installp_script:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.script.%player's world%} to "Installed"
+            send "&3Plugin &bScript &3installed"
+            make console execute command "/lp user %player% permission set script.use.plugin world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+ 
+command /uninstallp_script:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.script.%player's world%} to "Not Installed"
+            send "&3Plugin &bScript &3uninstalled"
+            make console execute command "/lp user %player% permission unset script.use.plugin world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /script_gui:
+    permission: script.use.plugin
+    trigger:
+        open chest with 1 row named "&b<script> &3Script &b</script>" to player
+        format slot 2 of player with lime dye named "&aManage" with lore "&3Create/Delete/Edit a script" to close then run [make player execute command "script_help"]
+        format slot 4 of player with book named "&3Scripts" with lore "%{scripts.%player's world%::*}%" to close
+        format slot 6 of player with red dye named "&cReset" with lore "&3Deletes all script files" and "&cNO CONFIRMATION ASKED" to close then run [make player execute command "script_reset"]
+
+command /script_help:
+    trigger:
+        send "&aType: &b/script <create/delete> <name>"
+        send "&aType: &b/script <add/remove> <text> <script>"
+        send "&aType: &b/script parse <script>"
+
+command /script_reset:
+    permission: script.use.plugin
+    trigger:
+        loop {scripts.%player's world%::*}:
+            clear {script.%loop-value%::*}
+            remove loop-value from {scripts::*}
+        wait 1 second
+        clear {scripts.%player's world%::*}
+        send "&aDeleted all scripts!"
+
+command /script_debug:resetall:
+    permission: admin.rank
+    trigger:
+        clear {scripts::*} 
+
+command /script_debug:reset <text>:
+    permission: admin.rank
+    trigger:
+        remove arg-1 from {scripts::*}
+
+command /pspscripts:
+    trigger:
+        send "%{scripts::*}%"
+
+command /script <text> <text> [<text>]:
+    permission: script.use.plugin
+    trigger:
+        if arg-1 is "create":
+            if {scripts.%player's world%::*} contains arg-2:
+                send "&cName alredy taken!"
+            else:
+                if {scripts::*} contains arg-2:
+                    send "&cScript name alredy taken!"
+                else:
+                    add arg-2 to {scripts.%player's world%::*}
+                    add arg-2 to {scripts::*}
+                    send "&aScript &b%arg-2% &acreated!"
+        if arg-1 is "delete":
+            if {scripts.%player's world%::*} contains arg-2:
+                if {scripts::*} contains arg-2:
+                    remove arg-2 from {scripts.%player's world%::*}
+                    remove arg-2 from {scripts::*}
+                    clear {script.%arg-2%::*}
+                    send "&cScript &b%arg-2% &cdeleted!"
+                else:
+                    send "&cError 101-S: Contact support team"
+            else:
+                send "&cThis script doesn't exist!"
+        if arg-1 is "add":
+            if {scripts.%player's world%::*} contains "%arg-3%":
+                add arg-2 to {script.%arg-3%::*}
+                send "&aLine added"
+                send "=== <Script> ==="
+                send "%{script.%arg-3%::*}%"
+                send "================"
+            else:
+                send "&cScript not found"
+        if arg-1 is "remove":
+            if {scripts.%player's world%::*} contains "%arg-3%":
+                remove arg-2 from {script.%arg-3%::*}
+                send "&cLine removed"
+                send "=== <Script> ==="
+                send "%{script.%arg-3%::*}%"
+                send "================"
+            else:
+                send "&cScript not found"
+        if arg-1 is "parse":
+            if {scripts.%player's world%::*} contains arg-2:
+                make player execute command "script_parse %arg-2%"
+            else:
+                send "&cScript not found!"
+
+command /script_parse <text>:
+    permission: script.use.plugin
+    trigger:
+        send "&aParsing script &b%arg-1%&a..."
+        set {errors.%player%} to 0
+        loop {script.%arg-1%::*}:
+            if loop-value contains "on-chat", "on-move", "on-damage", "on-place", "on-break", "cancel-event", "heal-player", "kill-player", "kick-player", "gamemode-0", "gamemode-1", "gamemode-2", "gamemode-3", "time-day", "time-night", "on-vehicle-enter", "on-vehicle-exit", "weather-sun", "weather-rain", "weather-thunder", "var-", "setvar-", "on-anycommand", "varclear-", "on-consume", "on-death", "on-drop", "sudo-", "bc-" or "msg-":
+                #
+            else:
+                send "&cCan't understand line &3%loop-value%"
+                add 1 to {errors.%player%}
+        send "&aParse completed! &3(Errors: &b%{errors.%player%}%&3)"
+
+command /scriptdocs:
+    permission: script.use.plugin
+    trigger:
+        send "&b=== &3<Script / Docs> &b==="
+        send "                             "
+        send "&7Type /script_help for help!"
+        send "                             "
+        send "&b==========================="
+        send "&aEvents:"
+        send "&b==========================="
+        send "on-chat : Triggers if a player types a message in chat"
+        send "on-move : Triggers when a player moves"
+        send "on-damage : Triggers when a player takes damage"
+        send "on-place : Triggers when someone places a block"
+        send "on-break : Triggers when someone breaks a block"
+        send "on-vehicle-enter : Triggers when a player enters in a vehicle (ex: boat)"
+        send "on-vehicle-exit : Triggers when a player exits a vehicle (ex: boat)"
+        send "on-anycommand : Triggers when a player executes any command (excluding: Lobby, Hub, msg, r)"
+        send "on-consume : Triggers when a player eats/drinks something"
+        send "on-death : Triggers when a player dies"
+        send "on-drop : Triggers when a player drops something"
+        send "&b==========================="
+        send "&aEffects:"
+        send "&b==========================="
+        send "cancel-event : Cancels the event"
+        send "heal-player : heals a player"
+        send "kill-player : Kills the player"
+        send "kick-player : Kicks the player from the server"
+        send "gamemode-<gamemode> : Sets the gamemode of a player (Available: 0-1-2-3)"
+        send "time-(day/night) : Sets the server's time to day/night"
+        send "weather-(sun/rain/thunder) : Sets weather to sun/rain/thunder"
+        send "var-<name> : Returns a variable's value"
+        send "varset-<name>-<value> : Sets the value for a var (You can't set the value to another var!)"
+        send "varclear-<name> : Resets a variable"
+        send "bc-<message> : Sends a message to the server"
+        send "msg-<message> : Sends a message to the player who triggered the action"
+        send "&b==========================="
+
+on chat:
+    if {plugin.script.%player's world%} is "Installed":
+        loop {scripts.%player's world%::*}:
+            if {script.%loop-value-1%::*} contains "on-chat":
+                if {script.%loop-value-1%::*} contains "cancel-event":                
+                    cancel event
+                if {script.%loop-value-1%::*} contains "heal-player":
+                    make console execute command "heal %player%"
+                if {script.%loop-value-1%::*} contains "kill-player":
+                    make console execute command "essentials:kill %player%"
+                if {script.%loop-value-1%::*} contains "kick-player":
+                    make console execute command "sudo %player% lobby"
+                    send "&aYou have been kicked from this server"
+                if {script.%loop-value-1%::*} contains "gamemode-0":
+                    make console execute command "gm s %player%"
+                if {script.%loop-value-1%::*} contains "gamemode-1":
+                    make console execute command "gm c %player%"
+                if {script.%loop-value-1%::*} contains "gamemode-2":
+                    make console execute command "gm a %player%"
+                if {script.%loop-value-1%::*} contains "gamemode-3":
+                    make console execute command "gm sp %player%"
+                if {script.%loop-value-1%::*} contains "time-day":
+                    make console execute command "/mv modify set time day %player's world%"
+                if {script.%loop-value-1%::*} contains "time-night":
+                    make console execute command "/mv modify set time midnight %player's world%"
+                if {script.%loop-value-1%::*} contains "weather-sun":
+                    make console execute command "/mv modify set weather sun %player's world%"
+                if {script.%loop-value-1%::*} contains "weather-rain":
+                    make console execute command "/mv modify set weather rain %player's world%"
+                if {script.%loop-value-1%::*} contains "weather-thunder":
+                    make console execute command "/mv modify set weather thunder %player's world%"
+                loop {script.%loop-value-1%::*}:
+                    if loop-value-2 contains "var-":
+                        set {var.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        send "%colored {%{var.%loop-value-2%.%player's world%::2}%.%player's world%}%"
+                        wait 1 second
+                        clear {var.%loop-value-2%.%player's world%::*}
+                    if loop-value-2 contains "varset-":
+                        set {var.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        set {%{var.%loop-value-2%.%player's world%::2}%.%player's world%} to {var.%loop-value-2%.%player's world%::3}
+                        wait 1 second
+                        clear {var.%loop-value-2%.%player's world%::*}
+                    if loop-value-2 contains "varclear-":
+                        set {var.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        set {%{var.%loop-value-2%.%player's world%::2}%.%player's world%} to "<none>"
+                        wait 1 second
+                        clear {var.%loop-value-2%.%player's world%::*}
+                    if loop-value-2 contains "bc-":
+                        set {bc.%player%.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        broadcast "%{bc.%player%.%loop-value-2%.%player's world%::2}%" to player's world
+                        clear {bc.%player%.%loop-value-2%.%player's world%::*}
+                    if loop-value-2 contains "msg-":
+                        set {msg.%player%.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        send "%{msg.%player%.%loop-value-2%.%player's world%::2}%" to player
+                        clear {msg.%player%.%loop-value-2%.%player's world%::*}
+                        
+
+on any move:
+    if {plugin.script.%player's world%} is "Installed":
+        loop {scripts.%player's world%::*}:
+            if {script.%loop-value-1%::*} contains "on-move":
+                if {script.%loop-value-1%::*} contains "cancel-event":
+                    cancel event
+                if {script.%loop-value-1%::*} contains "heal-player":
+                    make console execute command "heal %player%"
+                if {script.%loop-value-1%::*} contains "kill-player":
+                    make console execute command "essentials:kill %player%"
+                if {script.%loop-value-1%::*} contains "kick-player":
+                    make console execute command "sudo %player% lobby"
+                    send "&aYou have been kicked from this server"
+                if {script.%loop-value-1%::*} contains "gamemode-0":
+                    make console execute command "gm s %player%"
+                if {script.%loop-value-1%::*} contains "gamemode-1":
+                    make console execute command "gm c %player%"
+                if {script.%loop-value-1%::*} contains "gamemode-2":
+                    make console execute command "gm a %player%"
+                if {script.%loop-value-1%::*} contains "gamemode-3":
+                    make console execute command "gm sp %player%"
+                if {script.%loop-value-1%::*} contains "time-day":
+                    make console execute command "/mv modify set time day %player's world%"
+                if {script.%loop-value-1%::*} contains "time-night":
+                    make console execute command "/mv modify set time midnight %player's world%"
+                if {script.%loop-value-1%::*} contains "weather-sun":
+                    make console execute command "/mv modify set weather sun %player's world%"
+                if {script.%loop-value-1%::*} contains "weather-rain":
+                    make console execute command "/mv modify set weather rain %player's world%"
+                if {script.%loop-value-1%::*} contains "weather-thunder":
+                    make console execute command "/mv modify set weather thunder %player's world%"
+                loop {script.%loop-value-1%::*}:
+                    if loop-value-2 contains "var-":
+                        set {var.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        send "%colored {%{var.%loop-value-2%.%player's world%::2}%.%player's world%}%"
+                        wait 1 second
+                        clear {var.%loop-value-2%.%player's world%::*}
+                    if loop-value-2 contains "setvar-":
+                        set {var.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        set {%{var.%loop-value-2%.%player's world%::2}%.%player's world%} to {var.%loop-value-2%.%player's world%::3}
+                        wait 1 second
+                        clear {var.%loop-value-2%.%player's world%::*}
+                    if loop-value-2 contains "varclear-":
+                        set {var.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        set {%{var.%loop-value-2%.%player's world%::2}%.%player's world%} to "<none>"
+                        wait 1 second
+                        clear {var.%loop-value-2%.%player's world%::*}
+                    if loop-value-2 contains "bc-":
+                        set {bc.%player%.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        broadcast "%{bc.%player%.%loop-value-2%.%player's world%::2}%" to player's world
+                        clear {bc.%player%.%loop-value-2%.%player's world%::*}
+                    if loop-value-2 contains "msg-":
+                        set {msg.%player%.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        send "%{msg.%player%.%loop-value-2%.%player's world%::2}%" to player
+                        clear {msg.%player%.%loop-value-2%.%player's world%::*}
+
+on damage:
+    if {plugin.script.%victim's world%} is "Installed":
+        loop {scripts.%victim's world%::*}:
+            if {script.%loop-value-1%::*} contains "on-damage":
+                if {script.%loop-value-1%::*} contains "cancel-event":
+                    cancel event
+                if {script.%loop-value-1%::*} contains "heal-player":
+                    make console execute command "heal %victim%"
+                if {script.%loop-value-1%::*} contains "kill-player":
+                    make console execute command "essentials:kill %victim%"
+                if {script.%loop-value-1%::*} contains "kick-player":
+                    make console execute command "sudo %victim% lobby"
+                    send "&aYou have been kicked from this server"
+                if {script.%loop-value-1%::*} contains "gamemode-0":
+                    make console execute command "gm s %victim%"
+                if {script.%loop-value-1%::*} contains "gamemode-1":
+                    make console execute command "gm c %victim%"
+                if {script.%loop-value-1%::*} contains "gamemode-2":
+                    make console execute command "gm a %victim%"
+                if {script.%loop-value-1%::*} contains "gamemode-3":
+                    make console execute command "gm sp %victim%"
+                if {script.%loop-value-1%::*} contains "time-day":
+                    make console execute command "/mv modify set time day %victim's world%"
+                if {script.%loop-value-1%::*} contains "time-night":
+                    make console execute command "/mv modify set time midnight %victim's world%"
+                if {script.%loop-value-1%::*} contains "weather-sun":
+                    make console execute command "/mv modify set weather sun %victim's world%"
+                if {script.%loop-value-1%::*} contains "weather-rain":
+                    make console execute command "/mv modify set weather rain %victim's world%"
+                if {script.%loop-value-1%::*} contains "weather-thunder":
+                    make console execute command "/mv modify set weather thunder %victim's world%"
+                loop {script.%loop-value-1%::*}:
+                    if loop-value-2 contains "var-":
+                        set {var.%loop-value-2%.%victim's world%::*} to loop-value-2 split at "-"
+                        send "%colored {%{var.%loop-value-2%.%victim's world%::2}%.%victim's world%}%"
+                        wait 1 second
+                        clear {var.%loop-value-2%.%victim's world%::*}
+                    if loop-value-2 contains "setvar-":
+                        set {var.%loop-value-2%.%victim's world%::*} to loop-value-2 split at "-"
+                        set {%{var.%loop-value-2%.%victim's world%::2}%.%victim's world%} to {var.%loop-value-2%.%victim's world%::3}
+                        wait 1 second
+                        clear {var.%loop-value-2%.%victim's world%::*}
+                    if loop-value-2 contains "varclear-":
+                        set {var.%loop-value-2%.%victim's world%::*} to loop-value-2 split at "-"
+                        set {%{var.%loop-value-2%.%victim's world%::2}%.%victim's world%} to "<none>"
+                        wait 1 second
+                        clear {var.%loop-value-2%.%victim's world%::*}
+                    if loop-value-2 contains "bc-":
+                        set {bc.%victim%.%loop-value-2%.%victim's world%::*} to loop-value-2 split at "-"
+                        broadcast "%{bc.%victim%.%loop-value-2%.%victim's world%::2}%" to victim's world
+                        clear {bc.%victim%.%loop-value-2%.%victim's world%::*}
+                    if loop-value-2 contains "msg-":
+                        set {msg.%victim%.%loop-value-2%.%victim's world%::*} to loop-value-2 split at "-"
+                        send "%{msg.%victim%.%loop-value-2%.%victim's world%::2}%" to victim
+                        clear {msg.%victim%.%loop-value-2%.%victim's world%::*}
+
+on block place:
+    if {plugin.script.%player's world%} is "Installed":
+        loop {scripts.%player's world%::*}:
+            if {script.%loop-value-1%::*} contains "on-place":
+                if {script.%loop-value-1%::*} contains "cancel-event":
+                    cancel event
+                if {script.%loop-value-1%::*} contains "heal-player":
+                    make console execute command "heal %player%"
+                if {script.%loop-value-1%::*} contains "kill-player":
+                    make console execute command "essentials:kill %player%"
+                if {script.%loop-value-1%::*} contains "kick-player":
+                    make console execute command "sudo %player% lobby"
+                    send "&aYou have been kicked from this server"
+                if {script.%loop-value-1%::*} contains "gamemode-0":
+                    make console execute command "gm s %player%"
+                if {script.%loop-value-1%::*} contains "gamemode-1":
+                    make console execute command "gm c %player%"
+                if {script.%loop-value-1%::*} contains "gamemode-2":
+                    make console execute command "gm a %player%"
+                if {script.%loop-value-1%::*} contains "gamemode-3":
+                    make console execute command "gm sp %player%"
+                if {script.%loop-value-1%::*} contains "time-day":
+                    make console execute command "/mv modify set time day %player's world%"
+                if {script.%loop-value-1%::*} contains "time-night":
+                    make console execute command "/mv modify set time midnight %player's world%"
+                if {script.%loop-value-1%::*} contains "weather-sun":
+                    make console execute command "/mv modify set weather sun %player's world%"
+                if {script.%loop-value-1%::*} contains "weather-rain":
+                    make console execute command "/mv modify set weather rain %player's world%"
+                if {script.%loop-value-1%::*} contains "weather-thunder":
+                    make console execute command "/mv modify set weather thunder %player's world%"
+                loop {script.%loop-value-1%::*}:
+                    if loop-value-2 contains "var-":
+                        set {var.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        send "%colored {%{var.%loop-value-2%.%player's world%::2}%.%player's world%}%"
+                        wait 1 second
+                        clear {var.%loop-value-2%.%player's world%::*}
+                    if loop-value-2 contains "setvar-":
+                        set {var.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        set {%{var.%loop-value-2%.%player's world%::2}%.%player's world%} to {var.%loop-value-2%.%player's world%::3}
+                        wait 1 second
+                        clear {var.%loop-value-2%.%player's world%::*}
+                    if loop-value-2 contains "varclear-":
+                        set {var.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        set {%{var.%loop-value-2%.%player's world%::2}%.%player's world%} to "<none>"
+                        wait 1 second
+                        clear {var.%loop-value-2%.%player's world%::*}
+                    if loop-value-2 contains "bc-":
+                        set {bc.%player%.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        broadcast "%{bc.%player%.%loop-value-2%.%player's world%::2}%" to player's world
+                        clear {bc.%player%.%loop-value-2%.%player's world%::*}
+                    if loop-value-2 contains "msg-":
+                        set {msg.%player%.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        send "%{msg.%player%.%loop-value-2%.%player's world%::2}%" to player
+                        clear {msg.%player%.%loop-value-2%.%player's world%::*}
+
+on block break:
+    if {plugin.script.%player's world%} is "Installed":
+        loop {scripts.%player's world%::*}:
+            if {script.%loop-value-1%::*} contains "on-break":
+                if {script.%loop-value-1%::*} contains "cancel-event":
+                    cancel event
+                if {script.%loop-value-1%::*} contains "heal-player":
+                    make console execute command "heal %player%"
+                if {script.%loop-value-1%::*} contains "kill-player":
+                    make console execute command "essentials:kill %player%"
+                if {script.%loop-value-1%::*} contains "kick-player":
+                    make console execute command "sudo %player% lobby"
+                    send "&aYou have been kicked from this server"
+                if {script.%loop-value-1%::*} contains "gamemode-0":
+                    make console execute command "gm s %player%"
+                if {script.%loop-value-1%::*} contains "gamemode-1":
+                    make console execute command "gm c %player%"
+                if {script.%loop-value-1%::*} contains "gamemode-2":
+                    make console execute command "gm a %player%"
+                if {script.%loop-value-1%::*} contains "gamemode-3":
+                    make console execute command "gm sp %player%"
+                if {script.%loop-value-1%::*} contains "time-day":
+                    make console execute command "/mv modify set time day %player's world%"
+                if {script.%loop-value-1%::*} contains "time-night":
+                    make console execute command "/mv modify set time midnight %player's world%"
+                if {script.%loop-value-1%::*} contains "weather-sun":
+                    make console execute command "/mv modify set weather sun %player's world%"
+                if {script.%loop-value-1%::*} contains "weather-rain":
+                    make console execute command "/mv modify set weather rain %player's world%"
+                if {script.%loop-value-1%::*} contains "weather-thunder":
+                    make console execute command "/mv modify set weather thunder %player's world%"
+                loop {script.%loop-value-1%::*}:
+                    if loop-value-2 contains "var-":
+                        set {var.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        send "%colored {%{var.%loop-value-2%.%player's world%::2}%.%player's world%}%"
+                        wait 1 second
+                        clear {var.%loop-value-2%.%player's world%::*}
+                    if loop-value-2 contains "setvar-":
+                        set {var.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        set {%{var.%loop-value-2%.%player's world%::2}%.%player's world%} to {var.%loop-value-2%.%player's world%::3}
+                        wait 1 second
+                        clear {var.%loop-value-2%.%player's world%::*}
+                    if loop-value-2 contains "varclear-":
+                        set {var.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        set {%{var.%loop-value-2%.%player's world%::2}%.%player's world%} to "<none>"
+                        wait 1 second
+                        clear {var.%loop-value-2%.%player's world%::*}
+                    if loop-value-2 contains "bc-":
+                        set {bc.%player%.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        broadcast "%{bc.%player%.%loop-value-2%.%player's world%::2}%" to player's world
+                        clear {bc.%player%.%loop-value-2%.%player's world%::*}
+                    if loop-value-2 contains "msg-":
+                        set {msg.%player%.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        send "%{msg.%player%.%loop-value-2%.%player's world%::2}%" to player
+                        clear {msg.%player%.%loop-value-2%.%player's world%::*}
+
+on vehicle enter:
+    entity is a player:
+        if {plugin.script.%player's world%} is "Installed":
+            loop {scripts.%player's world%::*}:
+                if {script.%loop-value-1%::*} contains "on-vehicle-enter":
+                    if {script.%loop-value-1%::*} contains "cancel-event":
+                        cancel event
+                    if {script.%loop-value-1%::*} contains "heal-player":
+                        make console execute command "heal %player%"
+                    if {script.%loop-value-1%::*} contains "kill-player":
+                        make console execute command "essentials:kill %player%"
+                    if {script.%loop-value-1%::*} contains "kick-player":
+                        make console execute command "sudo %player% lobby"
+                        send "&aYou have been kicked from this server"
+                    if {script.%loop-value-1%::*} contains "gamemode-0":
+                        make console execute command "gm s %player%"
+                    if {script.%loop-value-1%::*} contains "gamemode-1":
+                        make console execute command "gm c %player%"
+                    if {script.%loop-value-1%::*} contains "gamemode-2":
+                        make console execute command "gm a %player%"
+                    if {script.%loop-value-1%::*} contains "gamemode-3":
+                        make console execute command "gm sp %player%"
+                    if {script.%loop-value-1%::*} contains "time-day":
+                        make console execute command "/mv modify set time day %player's world%"
+                    if {script.%loop-value-1%::*} contains "time-night":
+                        make console execute command "/mv modify set time midnight %player's world%"
+                    if {script.%loop-value-1%::*} contains "weather-sun":
+                        make console execute command "/mv modify set weather sun %player's world%"
+                    if {script.%loop-value-1%::*} contains "weather-rain":
+                        make console execute command "/mv modify set weather rain %player's world%"
+                    if {script.%loop-value-1%::*} contains "weather-thunder":
+                        make console execute command "/mv modify set weather thunder %player's world%"
+                    loop {script.%loop-value-1%::*}:
+                        if loop-value-2 contains "var-":
+                            set {var.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                            send "%colored {%{var.%loop-value-2%.%player's world%::2}%.%player's world%}%"
+                            wait 1 second
+                            clear {var.%loop-value-2%.%player's world%::*}
+                        if loop-value-2 contains "setvar-":
+                            set {var.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                            set {%{var.%loop-value-2%.%player's world%::2}%.%player's world%} to {var.%loop-value-2%.%player's world%::3}
+                            wait 1 second
+                            clear {var.%loop-value-2%.%player's world%::*}
+                        if loop-value-2 contains "varclear-":
+                            set {var.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                            set {%{var.%loop-value-2%.%player's world%::2}%.%player's world%} to "<none>"
+                            wait 1 second
+                            clear {var.%loop-value-2%.%player's world%::*}
+                        if loop-value-2 contains "bc-":
+                            set {bc.%player%.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                            broadcast "%{bc.%player%.%loop-value-2%.%player's world%::2}%" to player's world
+                            clear {bc.%player%.%loop-value-2%.%player's world%::*}
+                        if loop-value-2 contains "msg-":
+                            set {msg.%player%.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                            send "%{msg.%player%.%loop-value-2%.%player's world%::2}%" to player
+                            clear {msg.%player%.%loop-value-2%.%player's world%::*}
+
+on vehicle exit:
+    if {plugin.script.%player's world%} is "Installed":
+        loop {scripts.%player's world%::*}:
+            if {script.%loop-value-1%::*} contains "on-vehicle-exit":
+                if {script.%loop-value-1%::*} contains "cancel-event":
+                    cancel event
+                if {script.%loop-value-1%::*} contains "heal-player":
+                    make console execute command "heal %player%"
+                if {script.%loop-value-1%::*} contains "kill-player":
+                    make console execute command "essentials:kill %player%"
+                if {script.%loop-value-1%::*} contains "kick-player":
+                    make console execute command "sudo %player% lobby"
+                    send "&aYou have been kicked from this server"
+                if {script.%loop-value-1%::*} contains "gamemode-0":
+                    make console execute command "gm s %player%"
+                if {script.%loop-value-1%::*} contains "gamemode-1":
+                    make console execute command "gm c %player%"
+                if {script.%loop-value-1%::*} contains "gamemode-2":
+                    make console execute command "gm a %player%"
+                if {script.%loop-value-1%::*} contains "gamemode-3":
+                    make console execute command "gm sp %player%"
+                if {script.%loop-value-1%::*} contains "time-day":
+                    make console execute command "/mv modify set time day %player's world%"
+                if {script.%loop-value-1%::*} contains "time-night":
+                    make console execute command "/mv modify set time midnight %player's world%"
+                if {script.%loop-value-1%::*} contains "weather-sun":
+                    make console execute command "/mv modify set weather sun %player's world%"
+                if {script.%loop-value-1%::*} contains "weather-rain":
+                    make console execute command "/mv modify set weather rain %player's world%"
+                if {script.%loop-value-1%::*} contains "weather-thunder":
+                    make console execute command "/mv modify set weather thunder %player's world%"
+                loop {script.%loop-value-1%::*}:
+                    if loop-value-2 contains "var-":
+                        set {var.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        send "%colored {%{var.%loop-value-2%.%player's world%::2}%.%player's world%}%"
+                        wait 1 second
+                        clear {var.%loop-value-2%.%player's world%::*}
+                    if loop-value-2 contains "setvar-":
+                        set {var.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        set {%{var.%loop-value-2%.%player's world%::2}%.%player's world%} to {var.%loop-value-2%.%player's world%::3}
+                        wait 1 second
+                        clear {var.%loop-value-2%.%player's world%::*}
+                    if loop-value-2 contains "varclear-":
+                        set {var.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        set {%{var.%loop-value-2%.%player's world%::2}%.%player's world%} to "<none>"
+                        wait 1 second
+                        clear {var.%loop-value-2%.%player's world%::*}
+                    if loop-value-2 contains "bc-":
+                        set {bc.%player%.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        broadcast "%{bc.%player%.%loop-value-2%.%player's world%::2}%" to player's world
+                        clear {bc.%player%.%loop-value-2%.%player's world%::*}
+                    if loop-value-2 contains "msg-":
+                        set {msg.%player%.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        send "%{msg.%player%.%loop-value-2%.%player's world%::2}%" to player
+                        clear {msg.%player%.%loop-value-2%.%player's world%::*}
+
+on command:
+    if {plugin.script.%player's world%} is "Installed":
+        if command is "/lobby", "/hub", "/msg", "r" or "/info":
+            #
+        else:
+            loop {scripts.%player's world%::*}:
+                if {script.%loop-value-1%::*} contains "on-anycommand":
+                    if {script.%loop-value-1%::*} contains "cancel-event":                
+                        cancel event
+                    if {script.%loop-value-1%::*} contains "heal-player":
+                        make console execute command "heal %player%"
+                    if {script.%loop-value-1%::*} contains "kill-player":
+                        make console execute command "essentials:kill %player%"
+                    if {script.%loop-value-1%::*} contains "kick-player":
+                        make console execute command "sudo %player% lobby"
+                        send "&aYou have been kicked from this server"
+                    if {script.%loop-value-1%::*} contains "gamemode-0":
+                        make console execute command "gm s %player%"
+                    if {script.%loop-value-1%::*} contains "gamemode-1":
+                        make console execute command "gm c %player%"
+                    if {script.%loop-value-1%::*} contains "gamemode-2":
+                        make console execute command "gm a %player%"
+                    if {script.%loop-value-1%::*} contains "gamemode-3":
+                        make console execute command "gm sp %player%"
+                    if {script.%loop-value-1%::*} contains "time-day":
+                        make console execute command "/mv modify set time day %player's world%"
+                    if {script.%loop-value-1%::*} contains "time-night":
+                        make console execute command "/mv modify set time midnight %player's world%"
+                    if {script.%loop-value-1%::*} contains "weather-sun":
+                        make console execute command "/mv modify set weather sun %player's world%"
+                    if {script.%loop-value-1%::*} contains "weather-rain":
+                        make console execute command "/mv modify set weather rain %player's world%"
+                    if {script.%loop-value-1%::*} contains "weather-thunder":
+                        make console execute command "/mv modify set weather thunder %player's world%"
+                    loop {script.%loop-value-1%::*}:
+                        if loop-value-2 contains "var-":
+                            set {var.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                            send "%colored {%{var.%loop-value-2%.%player's world%::2}%.%player's world%}%"
+                            wait 1 second
+                            clear {var.%loop-value-2%.%player's world%::*}
+                        if loop-value-2 contains "varset-":
+                            set {var.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                            set {%{var.%loop-value-2%.%player's world%::2}%.%player's world%} to {var.%loop-value-2%.%player's world%::3}
+                            wait 1 second
+                            clear {var.%loop-value-2%.%player's world%::*}
+                        if loop-value-2 contains "varclear-":
+                            set {var.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                            set {%{var.%loop-value-2%.%player's world%::2}%.%player's world%} to "<none>"
+                            wait 1 second
+                            clear {var.%loop-value-2%.%player's world%::*}
+                        if loop-value-2 contains "bc-":
+                            set {bc.%player%.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                            broadcast "%{bc.%player%.%loop-value-2%.%player's world%::2}%" to player's world
+                            clear {bc.%player%.%loop-value-2%.%player's world%::*}
+                        if loop-value-2 contains "msg-":
+                            set {msg.%player%.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                            send "%{msg.%player%.%loop-value-2%.%player's world%::2}%" to player
+                            clear {msg.%player%.%loop-value-2%.%player's world%::*}
+
+on consume:
+    if {plugin.script.%player's world%} is "Installed":
+        loop {scripts.%player's world%::*}:
+            if {script.%loop-value-1%::*} contains "on-consume":
+                if {script.%loop-value-1%::*} contains "cancel-event":                
+                    cancel event
+                if {script.%loop-value-1%::*} contains "heal-player":
+                    make console execute command "heal %player%"
+                if {script.%loop-value-1%::*} contains "kill-player":
+                    make console execute command "essentials:kill %player%"
+                if {script.%loop-value-1%::*} contains "kick-player":
+                    make console execute command "sudo %player% lobby"
+                    send "&aYou have been kicked from this server"
+                if {script.%loop-value-1%::*} contains "gamemode-0":
+                    make console execute command "gm s %player%"
+                if {script.%loop-value-1%::*} contains "gamemode-1":
+                    make console execute command "gm c %player%"
+                if {script.%loop-value-1%::*} contains "gamemode-2":
+                    make console execute command "gm a %player%"
+                if {script.%loop-value-1%::*} contains "gamemode-3":
+                    make console execute command "gm sp %player%"
+                if {script.%loop-value-1%::*} contains "time-day":
+                    make console execute command "/mv modify set time day %player's world%"
+                if {script.%loop-value-1%::*} contains "time-night":
+                    make console execute command "/mv modify set time midnight %player's world%"
+                if {script.%loop-value-1%::*} contains "weather-sun":
+                    make console execute command "/mv modify set weather sun %player's world%"
+                if {script.%loop-value-1%::*} contains "weather-rain":
+                    make console execute command "/mv modify set weather rain %player's world%"
+                if {script.%loop-value-1%::*} contains "weather-thunder":
+                    make console execute command "/mv modify set weather thunder %player's world%"
+                loop {script.%loop-value-1%::*}:
+                    if loop-value-2 contains "var-":
+                        set {var.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        send "%colored {%{var.%loop-value-2%.%player's world%::2}%.%player's world%}%"
+                        wait 1 second
+                        clear {var.%loop-value-2%.%player's world%::*}
+                    if loop-value-2 contains "varset-":
+                        set {var.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        set {%{var.%loop-value-2%.%player's world%::2}%.%player's world%} to {var.%loop-value-2%.%player's world%::3}
+                        wait 1 second
+                        clear {var.%loop-value-2%.%player's world%::*}
+                    if loop-value-2 contains "varclear-":
+                        set {var.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        set {%{var.%loop-value-2%.%player's world%::2}%.%player's world%} to "<none>"
+                        wait 1 second
+                        clear {var.%loop-value-2%.%player's world%::*}
+                    if loop-value-2 contains "bc-":
+                        set {bc.%player%.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        broadcast "%{bc.%player%.%loop-value-2%.%player's world%::2}%" to player's world
+                        clear {bc.%player%.%loop-value-2%.%player's world%::*}
+                    if loop-value-2 contains "msg-":
+                        set {msg.%player%.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        send "%{msg.%player%.%loop-value-2%.%player's world%::2}%" to player
+                        clear {msg.%player%.%loop-value-2%.%player's world%::*}
+
+on death of player:
+    if {plugin.script.%player's world%} is "Installed":
+        loop {scripts.%player's world%::*}:
+            if {script.%loop-value-1%::*} contains "on-death":
+                if {script.%loop-value-1%::*} contains "cancel-event":                
+                    send "&bcancel-event &cisn't compatible with &bon-death"
+                if {script.%loop-value-1%::*} contains "heal-player":
+                    make console execute command "heal %player%"
+                if {script.%loop-value-1%::*} contains "kill-player":
+                    make console execute command "essentials:kill %player%"
+                if {script.%loop-value-1%::*} contains "kick-player":
+                    make console execute command "sudo %player% lobby"
+                    send "&aYou have been kicked from this server"
+                if {script.%loop-value-1%::*} contains "gamemode-0":
+                    make console execute command "gm s %player%"
+                if {script.%loop-value-1%::*} contains "gamemode-1":
+                    make console execute command "gm c %player%"
+                if {script.%loop-value-1%::*} contains "gamemode-2":
+                    make console execute command "gm a %player%"
+                if {script.%loop-value-1%::*} contains "gamemode-3":
+                    make console execute command "gm sp %player%"
+                if {script.%loop-value-1%::*} contains "time-day":
+                    make console execute command "/mv modify set time day %player's world%"
+                if {script.%loop-value-1%::*} contains "time-night":
+                    make console execute command "/mv modify set time midnight %player's world%"
+                if {script.%loop-value-1%::*} contains "weather-sun":
+                    make console execute command "/mv modify set weather sun %player's world%"
+                if {script.%loop-value-1%::*} contains "weather-rain":
+                    make console execute command "/mv modify set weather rain %player's world%"
+                if {script.%loop-value-1%::*} contains "weather-thunder":
+                    make console execute command "/mv modify set weather thunder %player's world%"
+                loop {script.%loop-value-1%::*}:
+                    if loop-value-2 contains "var-":
+                        set {var.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        send "%colored {%{var.%loop-value-2%.%player's world%::2}%.%player's world%}%"
+                        wait 1 second
+                        clear {var.%loop-value-2%.%player's world%::*}
+                    if loop-value-2 contains "varset-":
+                        set {var.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        set {%{var.%loop-value-2%.%player's world%::2}%.%player's world%} to {var.%loop-value-2%.%player's world%::3}
+                        wait 1 second
+                        clear {var.%loop-value-2%.%player's world%::*}
+                    if loop-value-2 contains "varclear-":
+                        set {var.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        set {%{var.%loop-value-2%.%player's world%::2}%.%player's world%} to "<none>"
+                        wait 1 second
+                        clear {var.%loop-value-2%.%player's world%::*}
+                    if loop-value-2 contains "bc-":
+                        set {bc.%player%.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        broadcast "%{bc.%player%.%loop-value-2%.%player's world%::2}%" to player's world
+                        clear {bc.%player%.%loop-value-2%.%player's world%::*}
+                    if loop-value-2 contains "msg-":
+                        set {msg.%player%.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        send "%{msg.%player%.%loop-value-2%.%player's world%::2}%" to player
+                        clear {msg.%player%.%loop-value-2%.%player's world%::*}
+
+on drop:
+    if {plugin.script.%player's world%} is "Installed":
+        loop {scripts.%player's world%::*}:
+            if {script.%loop-value-1%::*} contains "on-drop":
+                if {script.%loop-value-1%::*} contains "cancel-event":                
+                    cancel event
+                if {script.%loop-value-1%::*} contains "heal-player":
+                    make console execute command "heal %player%"
+                if {script.%loop-value-1%::*} contains "kill-player":
+                    make console execute command "essentials:kill %player%"
+                if {script.%loop-value-1%::*} contains "kick-player":
+                    make console execute command "sudo %player% lobby"
+                    send "&aYou have been kicked from this server"
+                if {script.%loop-value-1%::*} contains "gamemode-0":
+                    make console execute command "gm s %player%"
+                if {script.%loop-value-1%::*} contains "gamemode-1":
+                    make console execute command "gm c %player%"
+                if {script.%loop-value-1%::*} contains "gamemode-2":
+                    make console execute command "gm a %player%"
+                if {script.%loop-value-1%::*} contains "gamemode-3":
+                    make console execute command "gm sp %player%"
+                if {script.%loop-value-1%::*} contains "time-day":
+                    make console execute command "/mv modify set time day %player's world%"
+                if {script.%loop-value-1%::*} contains "time-night":
+                    make console execute command "/mv modify set time midnight %player's world%"
+                if {script.%loop-value-1%::*} contains "weather-sun":
+                    make console execute command "/mv modify set weather sun %player's world%"
+                if {script.%loop-value-1%::*} contains "weather-rain":
+                    make console execute command "/mv modify set weather rain %player's world%"
+                if {script.%loop-value-1%::*} contains "weather-thunder":
+                    make console execute command "/mv modify set weather thunder %player's world%"
+                loop {script.%loop-value-1%::*}:
+                    if loop-value-2 contains "var-":
+                        set {var.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        send "%colored {%{var.%loop-value-2%.%player's world%::2}%.%player's world%}%"
+                        wait 1 second
+                        clear {var.%loop-value-2%.%player's world%::*}
+                    if loop-value-2 contains "varset-":
+                        set {var.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        set {%{var.%loop-value-2%.%player's world%::2}%.%player's world%} to {var.%loop-value-2%.%player's world%::3}
+                        wait 1 second
+                        clear {var.%loop-value-2%.%player's world%::*}
+                    if loop-value-2 contains "varclear-":
+                        set {var.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        set {%{var.%loop-value-2%.%player's world%::2}%.%player's world%} to "<none>"
+                        wait 1 second
+                        clear {var.%loop-value-2%.%player's world%::*}
+                    if loop-value-2 contains "bc-":
+                        set {bc.%player%.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        broadcast "%{bc.%player%.%loop-value-2%.%player's world%::2}%" to player's world
+                        clear {bc.%player%.%loop-value-2%.%player's world%::*}
+                    if loop-value-2 contains "msg-":
+                        set {msg.%player%.%loop-value-2%.%player's world%::*} to loop-value-2 split at "-"
+                        send "%{msg.%player%.%loop-value-2%.%player's world%::2}%" to player
+                        clear {msg.%player%.%loop-value-2%.%player's world%::*}

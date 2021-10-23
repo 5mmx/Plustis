@@ -1,0 +1,52 @@
+#AutoBC
+
+command /installp_autobc:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.autobc.%player's world%} to "Installed"
+            send "&3Plugin &bAutoBC &3installed"
+            make console execute command "/lp user %player% permission set autobc.use.plugin world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+ 
+command /uninstallp_autobc:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.autobc.%player's world%} to "Not Installed"
+            send "&3Plugin &bAutoBC &3uninstalled"
+            make console execute command "/lp user %player% permission unset autobc.use.plugin world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /autobc <text> [<text>]:
+    permission: autobc.use.plugin
+    trigger:
+        if arg-1 is "add":
+            if arg-2 is set:
+                add arg-2 to {broadcast.%player's world%::*}
+                send "%colored arg-2% &aadded!"
+            else:
+                send "&cUsage: /autobc <add/remove/clear> [<string>]"
+        if arg-1 is "remove":
+            if arg-2 is set:
+                if {broadcast.%player's world%::*} contains arg-2:
+                    remove arg-2 from {broadcast.%player's world%::*}
+                else:
+                    send "&cThe database doesn't contain this value! (%colored arg-2%)"
+            else:
+                send "&cUsage: /autobc <add/remove/clear> [<string>]"
+        if arg-1 is "clear":
+            clear {broadcast.%player's world%::*}
+            send "&aBroadcast database cleared!"
+        else if arg-1 isn't "add", "remove" or "clear":
+            send "&cUsage: /autobc <add/remove/clear> [<string>]"
+
+every 3 minutes in "Lobby":
+    loop {servers::*}:
+        if {plugin.autobc.%loop-value%} is "Installed":
+            set {bc.%loop-value%} to a random element of {broadcast.%loop-value%::*}
+    wait 1 second
+    loop all players:
+        if {bc.%loop-player's world%} is set:
+            if {plugin.autobc.%loop-player's world%} is "Installed":
+                send "%colored {bc.%loop-player's world%}%" to loop-player

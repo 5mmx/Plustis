@@ -1,0 +1,94 @@
+#Jails
+#By Revurb
+
+command /installp_jails:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.jails.%player's world%} to "Installed"
+            send "&3Plugin &bJails &3installed"
+            make console execute command "/lp user %player% permission set jails.use.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission set jails.set.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission set jails.list.plugin world=%player's world%"
+            wait 3 seconds
+            make console execute command "/lp user %player% permission set jails.del.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission set jails.unjail.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission set jails.jailed.plugin world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+ 
+command /uninstallp_jails:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.jails.%player's world%} to "Not Installed"
+            send "&3Plugin &bJails &3uninstalled"
+            make console execute command "/lp user %player% permission unset jails.use.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission unset jails.set.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission unset jails.list.plugin world=%player's world%"
+            wait 3 seconds
+            make console execute command "/lp user %player% permission unset jails.del.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission unset jails.unjail.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission unset jails.jailed.plugin world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /setjail <text>:
+	permission: jails.set.plugin
+	trigger:
+		make console execute command "/lp user %player% permission set essentials.setwarp world=%player's world%"
+		wait 1 second
+		make console execute command "supersudo %player% /essentials:setwarp %player's world%_jail_%arg-1%"
+		add "%player's world%_jail_%arg-1%" to {warps.essentials.%player's world%::*} 
+		wait 1 second
+		make console execute command "/lp user %player% permission unset essentials.setwarp world=%player's world%"
+		add arg-1 to {jaillist.%player's world%::*}
+		send "&bSet jail &9%arg-1% &bto your position" to player
+
+
+command /jail <player> <text>:
+	permission: jails.use.plugin
+	trigger:
+		if {jaillist.%player's world%::*} contains arg-2:
+			make console execute command "essentials:warp %player's world%_jail_%arg-2% %player%"
+			add arg-1 to {jailedlist.%player's world%::*}
+			send "&cJailed &b%arg-1%" to player
+			send "&aYou have been jailed!" to arg-1
+		else:
+			send "&cJail not found :/"
+
+command /jails:
+	permission: jails.list.plugin
+	trigger:
+		send "&bJails: &3%{jaillist.%player's world%::*}%" to player
+
+command /jailed:
+	permission: jails.jailed.plugin
+	trigger:
+		send "&4Jailed: &c%{jailedlist.%player's world%::*}%" to player
+
+command /deljail <text>:
+	permission: jails.del.plugin
+	trigger:
+		if {jaillist.%player's world%::*} contains arg-1:
+			remove arg-1 from {jaillist.%player's world%::*}
+			make console execute command "essentials:delwarp %player's world%_jail_%arg-1%"
+			remove "%player's world%_jail_%arg-1%" from {warps.essentials.%player's world%::*}
+			send "&aJail deleted!"
+		else:
+			send "&cNo such jail" to player
+
+command /unjail <player>:
+	permission: jails.unjail.plugin
+	trigger:
+		if {jailedlist.%player's world%::*} contains arg-1:
+			remove arg-1 from {jailedlist.%player's world%::*}
+			wait 0.3 seconds
+			send "&cUnjailed &b%arg-1%" to player
+			send "&aYou've been unjailed!" to arg-1
+		else:
+			send "&cPlayer not jailed"
+
+on command:
+    if command is not "/lobby", "/msg", "/r", "/hub" or "/unjail":
+        if {jailedlist.%player's world%::*} contains player:
+            cancel event
+            send "&aYou can't use this command while jailed!"

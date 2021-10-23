@@ -1,0 +1,21 @@
+#LuckyBlocks
+
+command /installp_luckyblocks:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.luckyblocks.%player's world%} to "Installed"
+            send "&3Plugin &bLuckyBlocks &3installed"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /uninstallp_luckyblocks:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.luckyblocks.%player's world%} to "Not Installed"
+            send "&3Plugin &bLuckyBlocks &3uninstalled"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+on break of gold block:
+    if {plugin.luckyblocks.%player's world%} is "Installed":
+        give player 1 of random items out of all items

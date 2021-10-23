@@ -1,0 +1,54 @@
+#SignEditor
+
+command /installp_signeditor:
+    permission: legend.rank
+    trigger:
+        if player has permission "control.use":
+            set {plugin.signeditor.%player's world%} to "Installed"
+            send "&3Plugin &bSignEditor &3installed"
+            make console execute command "/lp user %player% permission set signeditor.command world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins_premium"
+
+command /uninstallp_signeditor:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.signeditor.%player's world%} to "Not Installed"
+            send "&3Plugin &bSignEditor &3uninstalled"
+            make console execute command "/lp user %player% permission unset signeditor.command world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins_premium"
+
+options:
+	prefix: &2[SignEditor] &a
+	signEdited: Line &7%arg-2% &awas changed to &7%colored arg-3% 
+	needHelp: &aUse: /signeditor help
+	lineNotSet: You did not select a line
+	lineNotIsANumber: The line has to be a number
+	skReloaded: Script reloaded! (if you have any error check console)
+	errorNotTargetSign: &cThe block you are looking at is not a sign
+	errorSignOnly4Lines: The signs only have 4 lines
+	noPermission: &cYou do not have permissions to do that!
+	version: 1.0.1
+command /signeditor [<text>] [<number>] [<text>]:
+	permission: signeditor.command
+	trigger:
+		if arg 1 is not set:
+			send "{@prefix}{@needHelp}"
+		else if arg 1 is "help":
+			send "{@prefix}Command list:"
+			send "&2> &a/signeditor edit <line> <text> &2- &fEdit the poster you are looking at"
+		else if arg 1 is "edit":
+			if target block is sign:
+				if arg-2 is between 1 and 4:
+					if arg 2 is 1:
+						set 1st line of target block to "%colored arg-3%"
+					else if arg 2 is 2:
+						set 2nd line of target block to "%colored arg-3%"
+					else if arg 2 is 3:
+						set 3rd line of target block to "%colored arg-3%"
+					else if arg 2 is 4:
+						set 4th line of target block to "%colored arg-3%"
+					send "{@prefix}{@signEdited}" to player
+				else:
+					send "{@prefix}{@errorSignOnly4Lines}"

@@ -1,0 +1,122 @@
+#CommandBlocks
+
+command /installp_commandblocks:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.commandblocks.%player's world%} to "Installed"
+            send "&3Plugin &bCommandBlocks &3installed"
+            make console execute command "/lp user %player% permission set cmdblocks.edit world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /uninstallp_commandblocks:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.commandblocks.%player's world%} to "Not Installed"
+            send "&3Plugin &bCommandBlocks &3uninstalled"
+            make console execute command "/lp user %player% permission unset cmdblocks.edit world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /commandblock:
+    usage: /commandblock <command with no />
+    permission: cmdblocks.edit
+    trigger:
+        wait 0.3 seconds
+        open chest with 2 row named "&3Command List" to player
+        format slot 13 of player with compass named "&cClose" to close
+        format slot 3 of player with book named "&aMinecraft Commands" with lore "&3Normal Commands" to close then run [make player execute command "?commandblock cmds"]
+        format slot 5 of player with barrier named "&bAPI Command &c[Coming Soon]" with lore "&3Plustis API commands" to close
+
+command /?commandblock <text>:
+    permission: cmdblocks.edit
+    trigger: 
+        wait 0.3 seconds
+        if arg-1 is "cmds":  
+            open chest with 2 row named "&3Command List > Commands" to player
+            format slot 13 of player with compass named "&cClose" to close
+            format slot 0 of player with book named "&bSetBlock" with lore "&3Sets a block at a selected location" to close then run [make player execute command "?cmdblock setblock"]
+            format slot 1 of player with book named "&bFill" with lore "&3Fill a region with a block" to close then run [make player execute command "?cmdblock fill"]
+            format slot 2 of player with book named "&bSummon" with lore "&3Summon a mob or entity" to close then run [make player execute command "?cmdblock summon"]
+            format slot 3 of player with book named "&bBroadcast" with lore "&3Broadcast a message to the Realm" to close then run [make player execute command "?cmdblock broadcast"]
+            format slot 4 of player with book named "&bTell" with lore "&3Tells a message to the closest players" to close then run [make player execute command "?cmdblock tell"]
+        if arg-1 is "API":
+            open chest with 2 row named "&3Command List > API Commands" to player
+            format slot 13 of player with compass named "&cClose" to close
+            format slot 0 of player with book named "&bAPI-Rank" with lore "&3Change a player's rank" to close then run [make player execute command "?cmdblock-api API-Rank"]
+            format slot 1 of player with book named "&bAPI-Sudo" with lore "&3Forces a player to execute a command" to close then run [make player execute command "?cmdblock-api API-Sudo"]
+            format slot 2 of player with book named "&bAPI-Msg" with lore "&3Sends a private message to the selected player" to close then run [make player execute command "?cmdblock-api API-Msg"]
+            format slot 3 of player with book named "&bAPI-Plugin" with lore "&3Install/Uninstall Plugins" to close then run [make player execute command "?cmdblock-api API-Plugin"]
+            format slot 4 of player with book named "&bAPI-Kick" with lore "&3Kick a player" to close then run [make player execute command "?cmdblock-api API-Kick"]
+            format slot 5 of player with book named "&bAPI-Kill" with lore "&3Kill a player" to close then run [make player execute command "?cmdblock-api API-Kill"]
+            format slot 6 of player with book named "&bAPI-KillAll" with lore "&3Kill all players" to close then run [make player execute command "?cmdblock-api API-KillAll"]
+            format slot 7 of player with book named "&bAPI-Stop" with lore "&3Stops the Realm" to close then run [make player execute command "?cmdblock-api API-Stop"]
+            
+command /?cmdblock <text>:
+    permission: cmdblocks.edit
+    trigger:
+        clear {selected.cmd.%player%}
+
+        if arg-1 is "setblock":
+            send "&aPlease type: &b/command <x> <y> <z> <block> [<destroy|keep|replace>]" to player
+            set {selected.cmd.%player%} to "/setblock"
+
+        if arg-1 is "fill":
+            send "&aPlease type: &b/command <from> <to> <block> [destroy|hollow|keep|outline|replace]" to player
+            set {selected.cmd.%player%} to "/fill"
+
+        if arg-1 is "summon":
+            send "&aPlease type: &b/command <entity> [<pos>] [<nbt>]" to player
+            set {selected.cmd.%player%} to "/summon"
+
+        if arg-1 is "broadcast":
+            send "&aPlease type: &b/command <message>" to player
+            set {selected.cmd.%player%} to "/broadcastworld %player's world%"
+
+command /?cmdblock-api <text>:
+    permission: cmdblocks.edit
+    trigger:
+        clear {selected.cmd.%player%}
+
+        if arg-1 is "API-Rank":
+            send "&aPlease type: &b/command <API-Code> <player> <rank>" to player
+            set {selected.cmd.%player%} to "/api_rank cmdblk"
+
+        if arg-1 is "API-Sudo":
+            send "&aPlease type: &b/command <API-Code> <player> <command>" to player
+            set {selected.cmd.%player%} to "/api_sudo cmdblk"
+
+        if arg-1 is "API-Msg":
+            send "&aPlease type: &b/command <API-Code> <player> <text>" to player
+            set {selected.cmd.%player%} to "/api_msg cmdblk"
+
+        if arg-1 is "API-Plugin":
+            send "&aPlease type: &b/command <API-Code> <install/uninstall> <plugin>" to player
+            set {selected.cmd.%player%} to "/api_plugin cmdblk"
+
+        if arg-1 is "API-Kick":
+            send "&aPlease type: &b/command <API-Code> <player> <reason>" to player
+            set {selected.cmd.%player%} to "/api_kick cmdblk"
+
+        if arg-1 is "API-Kill":
+            send "&aPlease type: &b/command <API-Code> <player>" to player
+            set {selected.cmd.%player%} to "/api_kill cmdblk"
+
+        if arg-1 is "API-KillAll":
+            send "&aPlease type: &b/command <API-Code>" to player
+            set {selected.cmd.%player%} to "/api_killall cmdblk"
+
+        if arg-1 is "API-Stop":
+            send "&aPlease type: &b/command <API-Code>" to player
+            set {selected.cmd.%player%} to "/api_stop cmdblk"
+
+
+command /command <text>:
+    trigger:
+        if {selected.cmd.%player%} is set:
+            set {selected.cmd.%player%} to "%{selected.cmd.%player%}% %arg-1%"
+
+            set targeted block to command block
+            add "{Command:""%{selected.cmd.%player%}%""}" to nbt of targeted block
+            wait 2 seconds
+            clear {selected.cmd.%player%}

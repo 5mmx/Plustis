@@ -1,0 +1,23 @@
+#MultiplayerSleep
+
+command /installp_multiplayersleep:
+    permission: legend.rank
+    trigger:
+        if player has permission "control.use":
+            set {plugin.multiplayersleep.%player's world%} to "Installed"
+            send "&3Plugin &bMultiplayerSleep &3installed"
+            wait 0.3 seconds
+            make player execute command "/pplugins_premium"
+
+command /uninstallp_multiplayersleep:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.multiplayersleep.%player's world%} to "Not Installed"
+            send "&3Plugin &bMultiplayerSleep &3uninstalled"
+            wait 0.3 seconds
+            make player execute command "/pplugins_premium"
+
+on bed enter:
+    if {plugin.multiplayersleep.%player's world%} is "Installed":
+        set time in player's world to day
+        broadcast "&cServer> &b%player%&7 has slept and the world's time has been set to day!" to player's world

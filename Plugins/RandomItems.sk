@@ -1,0 +1,34 @@
+#RandomItems
+
+command /installp_randomitems:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.randomitems.%player's world%} to "Installed"
+            send "&3Plugin &bRandomItems &3installed"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /uninstallp_randomitems:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.randomitems.%player's world%} to "Not Installed"
+            send "&3Plugin &bRandomItems &3uninstalled"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+every 30 seconds:
+    loop all players:
+        if {plugin.randomitems.%loop-player's world%} is "Installed":
+            if {loop.items.%loop-player%} is "false":
+                stop
+            else:
+                give loop-player 1 of random items out of all items
+
+command /toggleitems:
+    trigger:
+        if {loop.items.%player%} is "false":
+            set {loop.items.%player%} to "true"
+            send "&bYou will get items"
+        else:
+            set {loop.items.%player%} to "false"
+            send "&bYou won't get items"

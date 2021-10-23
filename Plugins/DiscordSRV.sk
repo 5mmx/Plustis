@@ -1,0 +1,44 @@
+#DiscordSRV
+
+command /installp_discordsrv:
+    permission: legend.rank
+    trigger:
+        if player has permission "control.use":
+            set {plugin.discordsrv.%player's world%} to "Installed"
+            send "&3Plugin &bDiscordSRV &3installed"
+            make console execute command "/lp user %player% permission set discordsrv.plugin world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins_premium"
+
+command /uninstallp_discordsrv:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.discordsrv.%player's world%} to "Not Installed"
+            send "&3Plugin &bDiscordSRV &3uninstalled"
+            make console execute command "/lp user %player% permission unset discordsrv.plugin world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins_premium"
+
+on skript load:
+        login to "NjkxOTIyNTI0ODI4NzI5MzQ0.XnnBHw.W2u-P7-vM9tJj4ia5zgP2W-GhPI" with the name "DiscordSRV"
+
+command /setchatid <text>:
+    permission: discordsrv.plugin
+    trigger:
+        if player has permission "control.use":
+            send "&3ChatID set to &b%arg-1%"
+            set {chat.id.%player's world%} to arg-1
+
+command /setconsoleid <text>:
+    permission: discordsrv.plugin
+    trigger:
+        if player has permission "control.use":
+            send "&3ConsoleID set to &b%arg-1%"
+            set {console.id.%player's world%} to arg-1
+
+on command:
+    if {plugin.discordsrv.%player's world%} is "Installed":
+        if command is "msg", "login", "changepassword", "tell", "security", "sc", "staffchat", "oc", "support" or "supportchat":
+            send "%player% executed: %command%" to channel with id "%{console.id.%player's world%}%" with "DiscordSRV"
+        else:
+            send "%player% executed: %full command%" to channel with id "%{console.id.%player's world%}%" with "DiscordSRV"

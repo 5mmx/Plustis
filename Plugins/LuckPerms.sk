@@ -1,0 +1,517 @@
+#LuckPerms
+
+command /installp_luckperms:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.luckperms.%player's world%} to "Installed"
+            send "&3Plugin &bLuckPerms &3installed"
+            make console execute command "/lp user %player% permission set luckperms.plugin world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /uninstallp_luckperms:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.luckperms.%player's world%} to "Not Installed"
+            send "&3Plugin &bLuckPerms &3uninstalled"
+            make console execute command "/lp user %player% permission unset luckperms.plugin world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /ppermissions:
+    permission: luckperms.plugin
+    trigger:
+        if player has permission "control.use":
+            wait 0.3 seconds
+            open chest with 3 row named "&3Files > LuckPerms > Groups" to player
+            format slot 22 of player with arrow named "&eBack" to close then run [make player execute command "pfilemanager_plugins_luckperms"]
+            format slot 0 of player with paper named "&3Default" with lore "&3Default Rank" to close then run [make player execute command "pserver_rank default"]
+            format slot 1 of player with paper named "&3JrMod" to close then run [make player execute command "pserver_rank pjrmod"]
+            format slot 2 of player with paper named "&3Mod" to close then run [make player execute command "pserver_rank pmod"]
+            format slot 3 of player with paper named "&3SrMod" to close then run [make player execute command "pserver_rank psrmod"]
+            format slot 4 of player with paper named "&3Admin" to close then run [make player execute command "pserver_rank padmin"]
+            format slot 5 of player with paper named "&3Customizable Rank 1" to close then run [make player execute command "pserver_rank pcust1"]
+            format slot 6 of player with paper named "&3Customizable Rank 2" to close then run [make player execute command "pserver_rank pcust2"]
+            format slot 7 of player with paper named "&3Customizable Rank 3" to close then run [make player execute command "pserver_rank pcust3"]
+            format slot 8 of player with paper named "&3Customizable Rank 4" to close then run [make player execute command "pserver_rank pcust4"]
+            format slot 9 of player with paper named "&3Customizable Rank 5" to close then run [make player execute command "pserver_rank pcust5"]
+            format slot 10 of player with paper named "&3Customizable Rank 6" to close then run [make player execute command "pserver_rank pcust6"]
+        else:
+            send "&cYou are not allowed to edit this!"
+
+command /pserver_rank <text>:
+    permission: luckperms.plugin
+    trigger:
+        if player has permission "control.use":
+            wait 0.3 seconds
+            open chest with 4 row named "&3Files > LuckPerms > Groups > %arg-1%" to player
+            format slot 31 of player with arrow named "&eBack" to close then run [make player execute command "ppermissions"]
+            format slot 0 of player with paper named "&3Essentials" to close then run [make player execute command "pserver_rank_perms %arg-1% essentials"]
+            format slot 1 of player with paper named "&3Coreprotect" to close then run [make player execute command "pserver_rank_perms %arg-1% coreprotect"]
+            format slot 2 of player with paper named "&3Shopkeepers" to close then run [make player execute command "pserver_rank_perms %arg-1% shopkeepers"]
+            format slot 3 of player with paper named "&3Crackshot" to close then run [make player execute command "pserver_rank_perms %arg-1% crackshot"]
+            format slot 4 of player with paper named "&3ItemEditor" to close then run [make player execute command "pserver_rank_perms %arg-1% itemeditor"]
+            format slot 5 of player with paper named "&3ArmorstandEditor" to close then run [make player execute command "pserver_rank_perms %arg-1% armorstandeditor"]
+            format slot 6 of player with paper named "&3ImageOnMap" to close then run [make player execute command "pserver_rank_perms %arg-1% imageonmap"]
+            format slot 7 of player with paper named "&3WorldEdit" to close then run [make player execute command "pserver_rank_perms %arg-1% worldedit"]
+            format slot 8 of player with paper named "&3Kits" to close then run [make player execute command "pserver_rank_perms %arg-1% kits"]
+            format slot 9 of player with paper named "&3RandomTP" to close then run [make player execute command "pserver_rank_perms %arg-1% randomtp"]
+            format slot 10 of player with paper named "&3Vanish" to close then run [make player execute command "pserver_rank_perms %arg-1% vanish"]
+            format slot 11 of player with paper named "&3Warps" to close then run [make player execute command "pserver_rank_perms %arg-1% warps"]
+            format slot 12 of player with paper named "&3Jails" to close then run [make player execute command "pserver_rank_perms %arg-1% jails"]
+            format slot 13 of player with paper named "&3Scoreboard" to close then run [make player execute command "pserver_rank_perms %arg-1% scoreboard"]
+            format slot 14 of player with paper named "&3SignEditor" to close then run [make player execute command "pserver_rank_perms %arg-1% signeditor"]
+            format slot 15 of player with paper named "&3VoteKick" to close then run [make player execute command "pserver_rank_perms %arg-1% votekick"]
+            format slot 16 of player with paper named "&3Script - Slipt" to close then run [make player execute command "pserver_rank_perms %arg-1% script"]
+            format slot 17 of player with paper named "&3Freeze" to close then run [make player execute command "pserver_rank_perms %arg-1% freeze"]
+            format slot 18 of player with paper named "&3PunishmentGUI" to close then run [make player execute command "pserver_rank_perms %arg-1% punishmentgui"]
+            format slot 19 of player with paper named "&3NearbyPlayers" to close then run [make player execute command "pserver_rank_perms %arg-1% nearbyplayers"]
+            format slot 20 of player with paper named "&3ClearChat" to close then run [make player execute command "pserver_rank_perms %arg-1% clearchat"]
+            format slot 21 of player with paper named "&3CommandBlocks" to close then run [make player execute command "pserver_rank_perms %arg-1% commandblocks"]
+
+command /pserver_rank_perms <text> <text>:
+    permission: luckperms.plugin
+    trigger:
+        if player has permission "control.use":
+            wait 0.3 seconds
+            open chest with 6 row named "&3Files > LuckPerms > Groups > %arg-1% > %arg-2%" to player
+            format slot 49 of player with arrow named "&eBack" to close then run [make player execute command "pserver_rank %arg-1%"]
+            if arg-2 is "essentials": 
+                if {essentials.item.%arg-1%.%player's world%} is "true":
+                    format slot 0 of player with lime dye named "&3essentials.item" to close then run [make player execute command "/pserver_perms remove %arg-1% essentials.item"]
+                else:
+                    format slot 0 of player with gray dye named "&3essentials.item" to close then run [make player execute command "/pserver_perms add %arg-1% essentials.item"]
+
+                if {gmc.essentialspl.%arg-1%.%player's world%} is "true":
+                    format slot 1 of player with lime dye named "&3gmc.essentialspl" to close then run [make player execute command "/pserver_perms remove %arg-1% gmc.essentialspl"]
+                else:
+                    format slot 1 of player with gray dye named "&3gmc.essentialspl" to close then run [make player execute command "/pserver_perms add %arg-1% gmc.essentialspl"]
+
+                if {gms.essentialspl.%arg-1%.%player's world%} is "true":
+                    format slot 2 of player with lime dye named "&3gms.essentialspl" to close then run [make player execute command "/pserver_perms remove %arg-1% gms.essentialspl"]
+                else:
+                    format slot 2 of player with gray dye named "&3gms.essentialspl" to close then run [make player execute command "/pserver_perms add %arg-1% gms.essentialspl"]
+
+                if {gma.essentialspl.%arg-1%.%player's world%} is "true":
+                    format slot 3 of player with lime dye named "&3gma.essentialspl" to close then run [make player execute command "/pserver_perms remove %arg-1% gma.essentialspl"]
+                else:
+                    format slot 3 of player with gray dye named "&3gma.essentialspl" to close then run [make player execute command "/pserver_perms add %arg-1% gma.essentialspl"]
+
+                if {gmsp.essentialspl.%arg-1%.%player's world%} is "true":
+                    format slot 4 of player with lime dye named "&3gmsp.essentialspl" to close then run [make player execute command "/pserver_perms remove %arg-1% gmsp.essentialspl"]
+                else:
+                    format slot 4 of player with gray dye named "&3gmsp.essentialspl" to close then run [make player execute command "/pserver_perms add %arg-1% gmsp.essentialspl"]
+
+                if {sethome.essentialspl.%arg-1%.%player's world%} is "true":
+                    format slot 5 of player with lime dye named "&3sethome.essentialspl" to close then run [make player execute command "/pserver_perms remove %arg-1% sethome.essentialspl"]
+                else:
+                    format slot 5 of player with gray dye named "&3sethome.essentialspl" to close then run [make player execute command "/pserver_perms add %arg-1% sethome.essentialspl"]
+
+                if {home.essentialspl.%arg-1%.%player's world%} is "true":
+                    format slot 6 of player with lime dye named "&3home.essentialspl" to close then run [make player execute command "/pserver_perms remove %arg-1% home.essentialspl"]
+                else:
+                    format slot 6 of player with gray dye named "&3home.essentialspl" to close then run [make player execute command "/pserver_perms add %arg-1% home.essentialspl"]
+
+                if {invsee.essentialspl.%arg-1%.%player's world%} is "true":
+                    format slot 7 of player with lime dye named "&3invsee.essentialspl" to close then run [make player execute command "/pserver_perms remove %arg-1% invsee.essentialspl"]
+                else:
+                    format slot 7 of player with gray dye named "&3invsee.essentialspl" to close then run [make player execute command "/pserver_perms add %arg-1% invsee.essentialspl"]
+
+                if {kick.essentialspl.%arg-1%.%player's world%} is "true":
+                    format slot 8 of player with lime dye named "&3kick.essentialspl" to close then run [make player execute command "/pserver_perms remove %arg-1% kick.essentialspl"]
+                else:
+                    format slot 8 of player with gray dye named "&3kick.essentialspl" to close then run [make player execute command "/pserver_perms add %arg-1% kick.essentialspl"]
+
+                if {ban.essentialspl.%arg-1%.%player's world%} is "true":
+                    format slot 9 of player with lime dye named "&3ban.essentialspl" to close then run [make player execute command "/pserver_perms remove %arg-1% ban.essentialspl"]
+                else:
+                    format slot 9 of player with gray dye named "&3ban.essentialspl" to close then run [make player execute command "/pserver_perms add %arg-1% ban.essentialspl"]
+
+                if {unban.essentialspl.%arg-1%.%player's world%} is "true":
+                    format slot 10 of player with lime dye named "&3unban.essentialspl" to close then run [make player execute command "/pserver_perms remove %arg-1% unban.essentialspl"]
+                else:
+                    format slot 10 of player with gray dye named "&3unban.essentialspl" to close then run [make player execute command "/pserver_perms add %arg-1% unban.essentialspl"]
+
+                if {bc.essentialspl.%arg-1%.%player's world%} is "true":
+                    format slot 11 of player with lime dye named "&3bc.essentialspl" to close then run [make player execute command "/pserver_perms remove %arg-1% bc.essentialspl"]
+                else:
+                    format slot 11 of player with gray dye named "&3bc.essentialspl" to close then run [make player execute command "/pserver_perms add %arg-1% bc.essentialspl"]
+
+                if {day.essentialspl.%arg-1%.%player's world%} is "true":
+                    format slot 12 of player with lime dye named "&3day.essentialspl" to close then run [make player execute command "/pserver_perms remove %arg-1% day.essentialspl"]
+                else:
+                    format slot 12 of player with gray dye named "&3day.essentialspl" to close then run [make player execute command "/pserver_perms add %arg-1% day.essentialspl"]
+
+                if {night.essentialspl.%arg-1%.%player's world%} is "true":
+                    format slot 13 of player with lime dye named "&3night.essentialspl" to close then run [make player execute command "/pserver_perms remove %arg-1% night.essentialspl"]
+                else:
+                    format slot 13 of player with gray dye named "&3night.essentialspl" to close then run [make player execute command "/pserver_perms add %arg-1% night.essentialspl"]
+
+                if {sun.essentialspl.%arg-1%.%player's world%} is "true":
+                    format slot 14 of player with lime dye named "&3sun.essentialspl" to close then run [make player execute command "/pserver_perms remove %arg-1% sun.essentialspl"]
+                else:
+                    format slot 14 of player with gray dye named "&3sun.essentialspl" to close then run [make player execute command "/pserver_perms add %arg-1% sun.essentialspl"]
+
+                if {rain.essentialspl.%arg-1%.%player's world%} is "true":
+                    format slot 15 of player with lime dye named "&3rain.essentialspl" to close then run [make player execute command "/pserver_perms remove %arg-1% rain.essentialspl"]
+                else:
+                    format slot 15 of player with gray dye named "&3rain.essentialspl" to close then run [make player execute command "/pserver_perms add %arg-1% rain.essentialspl"]
+
+                if {thunder.essentialspl.%arg-1%.%player's world%} is "true":
+                    format slot 16 of player with lime dye named "&3thunder.essentialspl" to close then run [make player execute command "/pserver_perms remove %arg-1% thunder.essentialspl"]
+                else:
+                    format slot 16 of player with gray dye named "&3thunder.essentialspl" to close then run [make player execute command "/pserver_perms add %arg-1% thunder.essentialspl"]
+
+                if {effect.essentialspl.%arg-1%.%player's world%} is "true":
+                    format slot 17 of player with lime dye named "&3effect.essentialspl" to close then run [make player execute command "/pserver_perms remove %arg-1% effect.essentialspl"]
+                else:
+                    format slot 17 of player with gray dye named "&3effect.essentialspl" to close then run [make player execute command "/pserver_perms add %arg-1% effect.essentialspl"]
+
+                if {tp.essentialspl.%arg-1%.%player's world%} is "true":
+                    format slot 18 of player with lime dye named "&3tp.essentialspl" to close then run [make player execute command "/pserver_perms remove %arg-1% tp.essentialspl"]
+                else:
+                    format slot 18 of player with gray dye named "&3tp.essentialspl" to close then run [make player execute command "/pserver_perms add %arg-1% tp.essentialspl"]
+
+                if {tphere.essentialspl.%arg-1%.%player's world%} is "true":
+                    format slot 19 of player with lime dye named "&3tphere.essentialspl" to close then run [make player execute command "/pserver_perms remove %arg-1% tphere.essentialspl"]
+                else:
+                    format slot 19 of player with gray dye named "&3tphere.essentialspl" to close then run [make player execute command "/pserver_perms add %arg-1% tphere.essentialspl"]
+
+                if {kill.essentialspl.%arg-1%.%player's world%} is "true":
+                    format slot 20 of player with lime dye named "&3kill.essentialspl" to close then run [make player execute command "/pserver_perms remove %arg-1% kill.essentialspl"]
+                else:
+                    format slot 20 of player with gray dye named "&3kill.essentialspl" to close then run [make player execute command "/pserver_perms add %arg-1% kill.essentialspl"]
+
+                if {killall.essentialspl.%arg-1%.%player's world%} is "true":
+                    format slot 21 of player with lime dye named "&3killall.essentialspl" to close then run [make player execute command "/pserver_perms remove %arg-1% killall.essentialspl"]
+                else:
+                    format slot 21 of player with gray dye named "&3killall.essentialspl" to close then run [make player execute command "/pserver_perms add %arg-1% killall.essentialspl"]
+
+                if {tpa.essentialspl.%arg-1%.%player's world%} is "true":
+                    format slot 22 of player with lime dye named "&3tpa.essentialspl" to close then run [make player execute command "/pserver_perms remove %arg-1% tpa.essentialspl"]
+                else:
+                    format slot 22 of player with gray dye named "&3tpa.essentialspl" to close then run [make player execute command "/pserver_perms add %arg-1% tpa.essentialspl"]
+
+                if {tpaccept.essentialspl.%arg-1%.%player's world%} is "true":
+                    format slot 23 of player with lime dye named "&3tpaccept.essentialspl" to close then run [make player execute command "/pserver_perms remove %arg-1% tpaccept.essentialspl"]
+                else:
+                    format slot 23 of player with gray dye named "&3tpaccept.essentialspl" to close then run [make player execute command "/pserver_perms add %arg-1% tpaccept.essentialspl"]
+
+                if {tpdeny.essentialspl.%arg-1%.%player's world%} is "true":
+                    format slot 24 of player with lime dye named "&3tpdeny.essentialspl" to close then run [make player execute command "/pserver_perms remove %arg-1% tpdeny.essentialspl"]
+                else:
+                    format slot 24 of player with gray dye named "&3tpdeny.essentialspl" to close then run [make player execute command "/pserver_perms add %arg-1% tpdeny.essentialspl"]
+
+                if {warn.essentialspl.%arg-1%.%player's world%} is "true":
+                    format slot 25 of player with lime dye named "&3warn.essentialspl" to close then run [make player execute command "/pserver_perms remove %arg-1% warn.essentialspl"]
+                else:
+                    format slot 25 of player with gray dye named "&3warn.essentialspl" to close then run [make player execute command "/pserver_perms add %arg-1% warn.essentialspl"]
+
+                if {essentials.back.%arg-1%.%player's world%} is "true":
+                    format slot 26 of player with lime dye named "&3essentials.back" to close then run [make player execute command "/pserver_perms remove %arg-1% essentials.back"]
+                else:
+                    format slot 26 of player with gray dye named "&3essentials.back" to close then run [make player execute command "/pserver_perms add %arg-1% essentials.back"]
+                
+                if {tocord.essentialspl.%arg-1%.%player's world%} is "true":
+                    format slot 27 of player with lime dye named "&3tocord.essentialspl" to close then run [make player execute command "/pserver_perms remove %arg-1% tocord.essentialspl"]
+                else:
+                    format slot 27 of player with gray dye named "&3tocord.essentialspl" to close then run [make player execute command "/pserver_perms add %arg-1% tocord.essentialspl"]
+            
+                if {essentials.speed.%arg-1%.%player's world%} is "true":
+                    format slot 28 of player with lime dye named "&3essentials.speed" to close then run [make player execute command "/pserver_perms remove %arg-1% essentials.speed"]
+                else:
+                    format slot 28 of player with gray dye named "&3essentials.speed" to close then run [make player execute command "/pserver_perms add %arg-1% essentials.speed"]
+
+                if {essentials.hat.%arg-1%.%player's world%} is "true":
+                    format slot 29 of player with lime dye named "&3essentials.hat" to close then run [make player execute command "/pserver_perms remove %arg-1% essentials.hat"]
+                else:
+                    format slot 29 of player with gray dye named "&3essentials.hat" to close then run [make player execute command "/pserver_perms add %arg-1% essentials.hat"]
+            if arg-2 is "coreprotect":
+                if {coreprotect.inspect.%arg-1%.%player's world%} is "true":
+                    format slot 0 of player with lime dye named "&3coreprotect.inspect" to close then run [make player execute command "/pserver_perms remove %arg-1% coreprotect.inspect"]
+                else:
+                    format slot 0 of player with gray dye named "&3coreprotect.inspect" to close then run [make player execute command "/pserver_perms add %arg-1% coreprotect.inspect"]
+
+                if {coreprotect.lookup.%arg-1%.%player's world%} is "true":
+                    format slot 1 of player with lime dye named "&3coreprotect.lookup" to close then run [make player execute command "/pserver_perms remove %arg-1% coreprotect.lookup"]
+                else:
+                    format slot 1 of player with gray dye named "&3coreprotect.lookup" to close then run [make player execute command "/pserver_perms add %arg-1% coreprotect.lookup"]
+
+                if {coreprotect.rollback.%arg-1%.%player's world%} is "true":
+                    format slot 2 of player with lime dye named "&3coreprotect.rollback" to close then run [make player execute command "/pserver_perms remove %arg-1% coreprotect.rollback"]
+                else:
+                    format slot 2 of player with gray dye named "&3coreprotect.rollback" to close then run [make player execute command "/pserver_perms add %arg-1% coreprotect.rollback"]
+
+                if {coreprotect.restore.%arg-1%.%player's world%} is "true":
+                    format slot 3 of player with lime dye named "&3coreprotect.restore" to close then run [make player execute command "/pserver_perms remove %arg-1% coreprotect.restore"]
+                else:
+                    format slot 3 of player with gray dye named "&3coreprotect.restore" to close then run [make player execute command "/pserver_perms add %arg-1% coreprotect.restore"]
+            if arg-2 is "shopkeepers":
+                if {shopkeeper.admin.%arg-1%.%player's world%} is "true":
+                    format slot 0 of player with lime dye named "&3shopkeeper.admin" to close then run [make player execute command "/pserver_perms remove %arg-1% shopkeeper.admin"]
+                else:
+                    format slot 0 of player with gray dye named "&3shopkeeper.admin" to close then run [make player execute command "/pserver_perms add %arg-1% shopkeeper.admin"]
+            if arg-2 is "crackshot":
+                if {crackshot.list.%arg-1%.%player's world%} is "true":
+                    format slot 0 of player with lime dye named "&3crackshot.list" to close then run [make player execute command "/pserver_perms remove %arg-1% crackshot.list"]
+                else:
+                    format slot 0 of player with gray dye named "&3crackshot.list" to close then run [make player execute command "/pserver_perms add %arg-1% crackshot.list"]
+
+                if {crackshot.get.all.%arg-1%.%player's world%} is "true":
+                    format slot 1 of player with lime dye named "&3crackshot.get.all" to close then run [make player execute command "/pserver_perms remove %arg-1% crackshot.get.all"]
+                else:
+                    format slot 1 of player with gray dye named "&3crackshot.get.all" to close then run [make player execute command "/pserver_perms add %arg-1% crackshot.get.all"]
+
+                if {crackshot.use.all.%arg-1%.%player's world%} is "true":
+                    format slot 2 of player with lime dye named "&3crackshot.use.all" to close then run [make player execute command "/pserver_perms remove %arg-1% crackshot.use.all"]
+                else:
+                    format slot 2 of player with gray dye named "&3crackshot.use.all" to close then run [make player execute command "/pserver_perms add %arg-1% crackshot.use.all"]
+            if arg-2 is "itemeditor":
+                if {itemeditor.use.%arg-1%.%player's world%} is "true":
+                    format slot 0 of player with lime dye named "&3itemeditor.use" to close then run [make player execute command "/pserver_perms remove %arg-1% itemeditor.use"]
+                else:
+                    format slot 0 of player with gray dye named "&3itemeditor.use" to close then run [make player execute command "/pserver_perms add %arg-1% itemeditor.use"]
+            if arg-2 is "armorstandeditor":
+                if {asedit.basic.%arg-1%.%player's world%} is "true":
+                    format slot 0 of player with lime dye named "&3asedit.basic" to close then run [make player execute command "/pserver_perms remove %arg-1% asedit.basic"]
+                else:
+                    format slot 0 of player with gray dye named "&3asedit.basic" to close then run [make player execute command "/pserver_perms add %arg-1% asedit.basic"]
+            if arg-2 is "imageonmap":
+                if {imageonmap.new.%arg-1%.%player's world%} is "true":
+                    format slot 0 of player with lime dye named "&3imageonmap.new" to close then run [make player execute command "/pserver_perms remove %arg-1% imageonmap.new"]
+                else:
+                    format slot 0 of player with gray dye named "&3imageonmap.new" to close then run [make player execute command "/pserver_perms add %arg-1% imageonmap.new"]
+            if arg-2 is "worldedit":
+                if {WorldEdit.all.%arg-1%.%player's world%} is "true":
+                    format slot 0 of player with lime dye named "&3WorldEdit.*" to close then run [make player execute command "/pserver_perms remove %arg-1% WorldEdit.*"]
+                else:
+                    format slot 0 of player with gray dye named "&3WorldEdit.*" to close then run [make player execute command "/pserver_perms add %arg-1% WorldEdit.*"]
+            if arg-2 is "kits":
+                if {kits.see.plugin.%arg-1%.%player's world%} is "true":
+                    format slot 0 of player with lime dye named "&3kits.see.plugin" to close then run [make player execute command "/pserver_perms remove %arg-1% kits.see.plugin"]
+                else:
+                    format slot 0 of player with gray dye named "&3kits.see.plugin" to close then run [make player execute command "/pserver_perms add %arg-1% kits.see.plugin"]
+
+                if {kits.set.plugin.%arg-1%.%player's world%} is "true":
+                    format slot 1 of player with lime dye named "&3kits.set.plugin" to close then run [make player execute command "/pserver_perms remove %arg-1% kits.set.plugin"]
+                else:
+                    format slot 1 of player with gray dye named "&3kits.set.plugin" to close then run [make player execute command "/pserver_perms add %arg-1% kits.set.plugin"]
+
+                if {kits.1.plugin.%arg-1%.%player's world%} is "true":
+                    format slot 2 of player with lime dye named "&3kits.1.plugin" to close then run [make player execute command "/pserver_perms remove %arg-1% kits.1.plugin"]
+                else:
+                    format slot 2 of player with gray dye named "&3kits.1.plugin" to close then run [make player execute command "/pserver_perms add %arg-1% kits.1.plugin"]
+
+                if {kits.2.plugin.%arg-1%.%player's world%} is "true":
+                    format slot 3 of player with lime dye named "&3kits.2.plugin" to close then run [make player execute command "/pserver_perms remove %arg-1% kits.2.plugin"]
+                else:
+                    format slot 3 of player with gray dye named "&3kits.2.plugin" to close then run [make player execute command "/pserver_perms add %arg-1% kits.2.plugin"]
+
+                if {kits.3.plugin.%arg-1%.%player's world%} is "true":
+                    format slot 4 of player with lime dye named "&3kits.3.plugin" to close then run [make player execute command "/pserver_perms remove %arg-1% kits.3.plugin"]
+                else:
+                    format slot 4 of player with gray dye named "&3kits.3.plugin" to close then run [make player execute command "/pserver_perms add %arg-1% kits.3.plugin"]
+
+                if {kits.4.plugin.%arg-1%.%player's world%} is "true":
+                    format slot 5 of player with lime dye named "&3kits.4.plugin" to close then run [make player execute command "/pserver_perms remove %arg-1% kits.4.plugin"]
+                else:
+                    format slot 5 of player with gray dye named "&3kits.4.plugin" to close then run [make player execute command "/pserver_perms add %arg-1% kits.4.plugin"]
+
+                if {kits.5.plugin.%arg-1%.%player's world%} is "true":
+                    format slot 6 of player with lime dye named "&3kits.5.plugin" to close then run [make player execute command "/pserver_perms remove %arg-1% kits.5.plugin"]
+                else:
+                    format slot 6 of player with gray dye named "&3kits.5.plugin" to close then run [make player execute command "/pserver_perms add %arg-1% kits.5.plugin"]
+
+                if {kits.6.plugin.%arg-1%.%player's world%} is "true":
+                    format slot 7 of player with lime dye named "&3kits.6.plugin" to close then run [make player execute command "/pserver_perms remove %arg-1% kits.6.plugin"]
+                else:
+                    format slot 7 of player with gray dye named "&3kits.6.plugin" to close then run [make player execute command "/pserver_perms add %arg-1% kits.6.plugin"]
+
+                if {kits.7.plugin.%arg-1%.%player's world%} is "true":
+                    format slot 8 of player with lime dye named "&3kits.7.plugin" to close then run [make player execute command "/pserver_perms remove %arg-1% kits.7.plugin"]
+                else:
+                    format slot 8 of player with gray dye named "&3kits.7.plugin" to close then run [make player execute command "/pserver_perms add %arg-1% kits.7.plugin"]
+
+                if {kits.8.plugin.%arg-1%.%player's world%} is "true":
+                    format slot 9 of player with lime dye named "&3kits.8.plugin" to close then run [make player execute command "/pserver_perms remove %arg-1% kits.8.plugin"]
+                else:
+                    format slot 9 of player with gray dye named "&3kits.8.plugin" to close then run [make player execute command "/pserver_perms add %arg-1% kits.8.plugin"]
+
+                if {kits.9.plugin.%arg-1%.%player's world%} is "true":
+                    format slot 10 of player with lime dye named "&3kits.9.plugin" to close then run [make player execute command "/pserver_perms remove %arg-1% kits.9.plugin"]
+                else:
+                    format slot 10 of player with gray dye named "&3kits.9.plugin" to close then run [make player execute command "/pserver_perms add %arg-1% kits.9.plugin"]
+            if arg-2 is "randomtp":
+                if {randomtp.use.%arg-1%.%player's world%} is "true":
+                    format slot 0 of player with lime dye named "&3randomtp.use" to close then run [make player execute command "/pserver_perms remove %arg-1% randomtp.use"]
+                else:
+                    format slot 0 of player with gray dye named "&3randomtp.use" to close then run [make player execute command "/pserver_perms add %arg-1% randomtp.use"]
+            if arg-2 is "vanish":
+                if {essentials.vanish.%arg-1%.%player's world%} is "true":
+                    format slot 0 of player with lime dye named "&3vanish.use" to close then run [make player execute command "/pserver_perms remove %arg-1% essentials.vanish"]
+                else:
+                    format slot 0 of player with gray dye named "&3vanish.use" to close then run [make player execute command "/pserver_perms add %arg-1% essentials.vanish"]
+            if arg-2 is "warps":
+                if {warp.set.plugin.%arg-1%.%player's world%} is "true":
+                    format slot 0 of player with lime dye named "&3warp.set.plugin" to close then run [make player execute command "/pserver_perms remove %arg-1% warp.set.plugin"]
+                else:
+                    format slot 0 of player with gray dye named "&3warp.set.plugin" to close then run [make player execute command "/pserver_perms add %arg-1% warp.set.plugin"]
+
+                if {warp.use.plugin.%arg-1%.%player's world%} is "true":
+                    format slot 1 of player with lime dye named "&3warp.use.plugin" to close then run [make player execute command "/pserver_perms remove %arg-1% warp.use.plugin"]
+                else:
+                    format slot 1 of player with gray dye named "&3warp.use.plugin" to close then run [make player execute command "/pserver_perms add %arg-1% warp.use.plugin"]
+
+                if {warp.list.plugin.%arg-1%.%player's world%} is "true":
+                    format slot 2 of player with lime dye named "&3warp.list.plugin" to close then run [make player execute command "/pserver_perms remove %arg-1% warp.list.plugin"]
+                else:
+                    format slot 2 of player with gray dye named "&3warp.list.plugin" to close then run [make player execute command "/pserver_perms add %arg-1% warp.list.plugin"]
+
+                if {warp.del.plugin.%arg-1%.%player's world%} is "true":
+                    format slot 3 of player with lime dye named "&3warp.del.plugin" to close then run [make player execute command "/pserver_perms remove %arg-1% warp.del.plugin"]
+                else:
+                    format slot 3 of player with gray dye named "&3warp.del.plugin" to close then run [make player execute command "/pserver_perms add %arg-1% warp.del.plugin"]
+            if arg-2 is "jails":
+                if {jails.use.plugin.%arg-1%.%player's world%} is "true":
+                    format slot 0 of player with lime dye named "&3jails.use.plugin" to close then run [make player execute command "/pserver_perms remove %arg-1% jails.use.plugin"]
+                else:
+                    format slot 0 of player with gray dye named "&3jails.use.plugin" to close then run [make player execute command "/pserver_perms add %arg-1% jails.use.plugin"]
+
+                if {jails.set.plugin.%arg-1%.%player's world%} is "true":
+                    format slot 1 of player with lime dye named "&3jails.set.plugin" to close then run [make player execute command "/pserver_perms remove %arg-1% jails.set.plugin"]
+                else:
+                    format slot 1 of player with gray dye named "&3jails.set.plugin" to close then run [make player execute command "/pserver_perms add %arg-1% jails.set.plugin"]
+
+                if {jails.list.plugin.%arg-1%.%player's world%} is "true":
+                    format slot 2 of player with lime dye named "&3jails.list.plugin" to close then run [make player execute command "/pserver_perms remove %arg-1% jails.list.plugin"]
+                else:
+                    format slot 2 of player with gray dye named "&3jails.list.plugin" to close then run [make player execute command "/pserver_perms add %arg-1% jails.list.plugin"]
+
+                if {jails.del.plugin.%arg-1%.%player's world%} is "true":
+                    format slot 3 of player with lime dye named "&3jails.del.plugin" to close then run [make player execute command "/pserver_perms remove %arg-1% jails.del.plugin"]
+                else:
+                    format slot 3 of player with gray dye named "&3jails.del.plugin" to close then run [make player execute command "/pserver_perms add %arg-1% jails.del.plugin"]
+
+                if {jails.unjail.plugin.%arg-1%.%player's world%} is "true":
+                    format slot 4 of player with lime dye named "&3jails.unjail.plugin" to close then run [make player execute command "/pserver_perms remove %arg-1% jails.unjail.plugin"]
+                else:
+                    format slot 4 of player with gray dye named "&3jails.unjail.plugin" to close then run [make player execute command "/pserver_perms add %arg-1% jails.unjail.plugin"]
+
+                if {jails.jailed.plugin.%arg-1%.%player's world%} is "true":
+                    format slot 5 of player with lime dye named "&3jails.jailed.plugin" to close then run [make player execute command "/pserver_perms remove %arg-1% jails.jailed.plugin"]
+                else:
+                    format slot 5 of player with gray dye named "&3jails.jailed.plugin" to close then run [make player execute command "/pserver_perms add %arg-1% jails.jailed.plugin"]
+            if arg-2 is "scoreboard":
+                if {scoreboard.edit.plugin.%arg-1%.%player's world%} is "true":
+                    format slot 0 of player with lime dye named "&3scoreboard.edit.plugin" to close then run [make player execute command "/pserver_perms remove %arg-1% scoreboard.edit.plugin"]
+                else:
+                    format slot 0 of player with gray dye named "&3scoreboard.edit.plugin" to close then run [make player execute command "/pserver_perms add %arg-1% scoreboard.edit.plugin"]
+            if arg-2 is "signeditor":
+                if {signeditor.command.%arg-1%.%player's world%} is "true":
+                    format slot 0 of player with lime dye named "&3signeditor.command" to close then run [make player execute command "/pserver_perms remove %arg-1% signeditor.command"]
+                else:
+                    format slot 0 of player with gray dye named "&3signeditor.command" to close then run [make player execute command "/pserver_perms add %arg-1% signeditor.command"]
+            if arg-2 is "votekick":
+                if {votekick.use.plugin.%arg-1%.%player's world%} is "true":
+                    format slot 0 of player with lime dye named "&3votekick.use.plugin" to close then run [make player execute command "/pserver_perms remove %arg-1% votekick.use.plugin"]
+                else:
+                    format slot 0 of player with gray dye named "&3votekick.use.plugin" to close then run [make player execute command "/pserver_perms add %arg-1% votekick.use.plugin"]
+
+                if {votekick.bypass.plugin.%arg-1%.%player's world%} is "true":
+                    format slot 1 of player with lime dye named "&3votekick.bypass.plugin" to close then run [make player execute command "/pserver_perms remove %arg-1% votekick.bypass.plugin"]
+                else:
+                    format slot 1 of player with gray dye named "&3votekick.bypass.plugin" to close then run [make player execute command "/pserver_perms add %arg-1% votekick.bypass.plugin"]
+            if arg-2 is "script":
+                if {script.use.plugin.%arg-1%.%player's world%} is "true":
+                    format slot 0 of player with lime dye named "&3script.use.plugin" to close then run [make player execute command "/pserver_perms remove %arg-1% script.use.plugin"]
+                else:
+                    format slot 0 of player with gray dye named "&3script.use.plugin" to close then run [make player execute command "/pserver_perms add %arg-1% script.use.plugin"]
+            if arg-2 is "freeze":
+                if {freeze.use.plugin.%arg-1%.%player's world%} is "true":
+                    format slot 0 of player with lime dye named "&3freeze.use.plugin" to close then run [make player execute command "/pserver_perms remove %arg-1% freeze.use.plugin"]
+                else:
+                    format slot 0 of player with gray dye named "&3freeze.use.plugin" to close then run [make player execute command "/pserver_perms add %arg-1% freeze.use.plugin"]
+            if arg-2 is "punishmentgui":
+                if {punish.plugin.%arg-1%.%player's world%} is "true":
+                    format slot 0 of player with lime dye named "&3punish.plugin" to close then run [make player execute command "/pserver_perms remove %arg-1% punish.plugin"]
+                else:
+                    format slot 0 of player with gray dye named "&3punish.plugin" to close then run [make player execute command "/pserver_perms add %arg-1% punish.plugin"]
+            if arg-2 is "nearbyplayers":
+                if {setradius.nearby.%arg-1%.%player's world%} is "true":
+                    format slot 0 of player with lime dye named "&3setradius.nearby" to close then run [make player execute command "/pserver_perms remove %arg-1% setradius.nearby"]
+                else:
+                    format slot 0 of player with gray dye named "&3setradius.nearby" to close then run [make player execute command "/pserver_perms add %arg-1% setradius.nearby"]
+
+                if {nearby.use.%arg-1%.%player's world%} is "true":
+                    format slot 1 of player with lime dye named "&3nearby.use" to close then run [make player execute command "/pserver_perms remove %arg-1% nearby.use"]
+                else:
+                    format slot 1 of player with gray dye named "&3nearby.use" to close then run [make player execute command "/pserver_perms add %arg-1% nearby.use"]
+            if arg-2 is "clearchat":
+                if {clearchat.use.plugin.%arg-1%.%player's world%} is "true":
+                    format slot 0 of player with lime dye named "&3clearchat.use.plugin" to close then run [make player execute command "/pserver_perms remove %arg-1% clearchat.use.plugin"]
+                else:
+                    format slot 0 of player with gray dye named "&3clearchat.use.plugin" to close then run [make player execute command "/pserver_perms add %arg-1% clearchat.use.plugin"]
+            if arg-2 is "commandblocks":
+                if {cmdblocks.edit.%arg-1%.%player's world%} is "true":
+                    format slot 0 of player with lime dye named "&3cmdblocks.edit" to close then run [make player execute command "/pserver_perms remove %arg-1% cmdblocks.edit"]
+                else:
+                    format slot 0 of player with gray dye named "&3cmdblocks.edit" to close then run [make player execute command "/pserver_perms add %arg-1% cmdblocks.edit"]
+
+
+command /pserver_perms <text> <text> <text>:
+    permission: luckperms.plugin
+    trigger:
+        if player has permission "control.use":
+            if arg-1 is "add":
+                make console execute command "/lp group %arg-2% permission set %arg-3% world=%player's world%"
+                make player execute command "/pserver_rank %arg-2%"
+                send "&aPermission added!" to player
+                if arg-3 is "WorldEdit.*":
+                    set {WorldEdit.all.%arg-2%.%player's world%} to "true"
+                else:
+                    set {%arg-3%.%arg-2%.%player's world%} to "true"           
+            if arg-1 is "remove":
+                make console execute command "/lp group %arg-2% permission unset %arg-3% world=%player's world%"
+                make player execute command "/pserver_rank %arg-2%"
+                send "&cPermission removed!" to player
+                if arg-3 is "WorldEdit.*":
+                    set {WorldEdit.all.%arg-2%.%player's world%} to "false"
+                else:
+                    set {%arg-3%.%arg-2%.%player's world%} to "false"
+
+command /setrank <player> <text>:
+    permission: luckperms.plugin
+    trigger:
+        if player has permission "control.use":
+            if arg-1's world is "%player's world%":
+                if arg-2 is not set:
+                    send "&3Ranks: padmin, psrmod, pmod, pjrmod, default, pcust1, pcust2, pcust3, pcust4, pcust5, pcust6"
+                else:
+                    if arg-2 is "padmin", "psrmod", "pmod", "pjrmod", "default", "pcust1", "pcust2", "pcust3", "pcust4", "pcust5" or "pcust6":
+                        make console execute command "/lp user %arg-1% parent unset padmin world=%player's world%"
+                        make console execute command "/lp user %arg-1% parent unset psrmod world=%player's world%"
+                        make console execute command "/lp user %arg-1% parent unset pjrmod world=%player's world%"
+                        make console execute command "/lp user %arg-1% parent unset pmod world=%player's world%"
+                        make console execute command "/lp user %arg-1% parent unset pcust1 world=%player's world%"
+                        make console execute command "/lp user %arg-1% parent unset pcust2 world=%player's world%"
+                        make console execute command "/lp user %arg-1% parent unset pcust3 world=%player's world%"
+                        make console execute command "/lp user %arg-1% parent unset pcust4 world=%player's world%"
+                        make console execute command "/lp user %arg-1% parent unset pcust5 world=%player's world%"
+                        make console execute command "/lp user %arg-1% parent unset pcust6 world=%player's world%"
+                        wait 3 seconds seconds
+                        make console execute command "/lp user %arg-1% parent set %arg-2% world=%player's world%"       
+                        set {rank.%arg-1%.%player's world%} to arg-2
+                        send "&aRank set!" to player
+            else:
+                send "&cPlayer is not online on your server!"
+
+command /setprefix <text> <text>:
+    permission: luckperms.plugin
+    trigger:
+        if player has permission "control.use":
+            if arg-1 is not set:
+                send "&3Ranks: padmin, psrmod, pmod, pjrmod, default, pcust1, pcust2, pcust3, pcust4, pcust5, pcust6"
+            else:
+                if arg-1 is "padmin", "psrmod", "pmod", "pjrmod", "default", "pcust1", "pcust2", "pcust3", "pcust4", "pcust5" or "pcust6":
+                    set {prefix.%arg-1%.%player's world%} to arg-2
+                    send "&aPrefix set to &r%arg-2%" to player

@@ -1,0 +1,39 @@
+#Scoreboard
+
+command /installp_scoreboard:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.scoreboard.%player's world%} to "Installed"
+            send "&3Plugin &bScoreboard &3installed"
+            make console execute command "/lp user %player% permission set scoreboard.edit.plugin world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+ 
+command /uninstallp_scoreboard:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.scoreboard.%player's world%} to "Not Installed"
+            send "&3Plugin &bScoreboard &3uninstalled"
+            make console execute command "/lp user %player% permission unset scoreboard.edit.plugin world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+	
+command /scoreboard <text> [<text>] [<text>]:
+    permission: scoreboard.edit.plugin
+    usage: /scoreboard <set/reset> [<line>] [<text>]
+    trigger:
+        if arg-1 is "set":
+            if arg-2 is "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15" or "head":
+                if arg-3 is set:
+                    set {line.%arg-2%.%player's world%} to arg-3
+                    send "&a Line &b%arg-2% &aset to &b%arg-3%"
+                else:
+                    send "&cUsage: /scoreboard <on/off/set/reset> [<line>] [<text>]"
+            else:
+                send "&cInvalid line! Valid lines are 1 - 15 and head"
+        if arg-1 is "reset":
+            if arg-2 is "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15" or "head":
+                send "&aLine &b%arg-2% &aresetted"
+                clear {line.%arg-2%.%player's world%}
+            else:
+                send "&cInvalid line! Valid lines are 1 - 15 and head"

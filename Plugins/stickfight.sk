@@ -1,0 +1,66 @@
+#StickFight
+
+command /installp_stickfight:
+    permission: legend.rank
+    trigger:
+        if player has permission "control.use":
+            set {plugin.stickfight.%player's world%} to "Installed"
+            send "&3Plugin &bStickfight &3installed"
+            make console execute command "/lp user %player% permission set sf.setspawn.plugin world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins_premium"
+ 
+command /uninstallp_stickfight:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.stickfight.%player's world%} to "Not Installed"
+            send "&3Plugin &bStickfight &3uninstalled"
+            make console execute command "/lp user %player% permission set sf.setspawn.plugin world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins_premium"
+
+options:
+	tag1: &5[&bStickFight&5]
+
+command /setstickfight <text>:
+    permission: sf.setspawn.plugin
+    trigger:
+        if arg-1 is "1":
+            set {stickfight1.%player's world%.x} to "%player's x-coordinate%"
+            set {stickfight1.%player's world%.y} to "%player's y-coordinate%"
+            set {stickfight1.%player's world%.z} to "%player's z-coordinate%"
+            send "Set location 1 to your location"
+        if arg-1 is "2":
+            set {stickfight2.%player's world%.x} to "%player's x-coordinate%"
+            set {stickfight2.%player's world%.y} to "%player's y-coordinate%"
+            set {stickfight2.%player's world%.z} to "%player's z-coordinate%"
+            send "Set location 2 to your location"
+        if arg-1 is "3":
+            set {stickfight3.%player's world%.x} to "%player's x-coordinate%"
+            set {stickfight3.%player's world%.y} to "%player's y-coordinate%"
+            set {stickfight3.%player's world%.z} to "%player's z-coordinate%"
+            send "Set location 3 to your location"
+        if arg-1 is "4":
+            set {stickfight4.%player's world%.x} to "%player's x-coordinate%"
+            set {stickfight4.%player's world%.y} to "%player's y-coordinate%"
+            set {stickfight4.%player's world%.z} to "%player's z-coordinate%"
+            send "Set location 4 to your location"
+        if arg-1 is "5":
+            set {stickfight5.%player's world%.x} to "%player's x-coordinate%"
+            set {stickfight5.%player's world%.y} to "%player's y-coordinate%"
+            set {stickfight5.%player's world%.z} to "%player's z-coordinate%"
+            send "Set location 5 to your location"
+
+Command /stickfight:
+    trigger:
+        if {plugin.stickfight.%player's world%} is "Installed":
+            send "&3Sending you to &bSTICK FIGHT&3!"
+            set {_random.stickfight.%player's world%} to a random integer between 1 and 5
+            execute console command "clear %player%"
+            execute console command "/effect %player% minecraft:saturation 1000000 255 true"
+            give 1 of stick of knockback 10 to player
+            give 1 of bow of punch 3 to player
+            give 64 of arrow to player
+            set gamemode of player to survival
+            execute console command "fly %player% off"
+            make console execute command "minecraft:tp %player% %{stickfight%{_random.stickfight.%player's world%}%.%player's world%.x}% %{stickfight%{_random.stickfight.%player's world%}%.%player's world%.y}% %{stickfight%{_random.stickfight.%player's world%}%.%player's world%.z}%"

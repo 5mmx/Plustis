@@ -1,0 +1,29 @@
+#Vanish
+
+command /installp_vanish:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.vanish.%player's world%} to "Installed"
+            send "&3Plugin &bVanish &3installed"
+            make console execute command "/lp user %player% permission set essentials.vanish world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /uninstallp_vanish:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.vanish.%player's world%} to "Not Installed"
+            send "&3Plugin &bVanish &3uninstalled"
+            make console execute command "/lp user %player% permission unset essentials.vanish world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /vanish [<player>]:
+    permission: essentials.vanish
+    trigger:
+        if {plugin.vanish.%player's world%} is "Installed":
+            if arg-1 is set:
+                if arg-1's world is "%player's world%":
+                    make console execute command "v %arg-1%"
+            else:
+                make player execute command "/v"

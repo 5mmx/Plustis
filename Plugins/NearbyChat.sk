@@ -1,0 +1,38 @@
+#NearbyChat
+
+command /installp_nearbychat:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.nearbychat.%player's world%} to "Installed"
+            send "&3Plugin &bNearbyChat &3installed"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /uninstallp_nearbychat:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.nearbychat.%player's world%} to "Not Installed"
+            send "&3Plugin &bNearbyChat &3uninstalled"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /nc <text>:
+    trigger:
+        if {plugin.nearbychat.%player's world%} is "Installed":
+            send "&c[NEARBY] &r%player%: %arg-1%" to all players in radius 15 of player
+
+command /nc-toggle:
+    trigger:
+        if {plugin.nearbychat.%player's world%} is "Installed":
+            if {nc.%player%.%player's world%} is "true":
+                set {nc.%player%.%player's world%} to "false"
+                send "&3Nearby chat turned to false"
+            else:
+                set {nc.%player%.%player's world%} to "true"
+                send "&3Nearby chat turned to true"
+
+on chat:
+    if {plugin.nearbychat.%player's world%} is "Installed":
+        if {nc.%player%.%player's world%} is "true":
+            cancel event
+            make player execute command "/nc %message%"

@@ -1,0 +1,26 @@
+#BlockGravity
+
+command /installp_blockgravity:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.blockgravity.%player's world%} to "Installed"
+            send "&3Plugin &bBlockGravity &3installed"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /uninstallp_blockgravity:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.blockgravity.%player's world%} to "Not Installed"
+            send "&3Plugin &bBlockGravity &3uninstalled"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+every 1 tick:
+    loop all players:
+        if {plugin.blockgravity.%loop-player's world%} is "Installed":
+            loop blocks in radius 10 of loop-player:
+                if loop-block is not air:
+                    if "%block 1 below loop-block%" contains "air":
+                        spawn falling block of loop-block at location of loop-block
+                        set loop-block to air

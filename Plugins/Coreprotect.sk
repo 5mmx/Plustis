@@ -1,0 +1,27 @@
+#Coreprotect
+
+command /installp_coreprotect:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.coreprotect.%player's world%} to "Installed"
+            send "&3Plugin &bCoreprotect &3installed"
+            make console execute command "/lp user %player% permission set coreprotect.inspect world=%player's world%"
+            make console execute command "/lp user %player% permission set coreprotect.lookup world=%player's world%"
+            make console execute command "/lp user %player% permission set coreprotect.rollback world=%player's world%"
+            make console execute command "/lp user %player% permission set coreprotect.restore world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+
+
+command /uninstallp_coreprotect:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.coreprotect.%player's world%} to "Not Installed"
+            send "&3Plugin &bCoreprotect &3uninstalled"
+            make console execute command "/lp user %player% permission unset coreprotect.inspect world=%player's world%"
+            make console execute command "/lp user %player% permission unset coreprotect.lookup world=%player's world%"
+            make console execute command "/lp user %player% permission unset coreprotect.rollback world=%player's world%"
+            make console execute command "/lp user %player% permission unset coreprotect.restore world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"

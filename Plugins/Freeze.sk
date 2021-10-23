@@ -1,0 +1,42 @@
+#Freeze
+
+command /installp_freeze:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.freeze.%player's world%} to "Installed"
+            send "&3Plugin &bFreeze &3installed"
+            make console execute command "/lp user %player% permission set freeze.use.plugin world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+ 
+command /uninstallp_freeze:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.freeze.%player's world%} to "Not Installed"
+            send "&3Plugin &bFreeze &3uninstalled"
+            make console execute command "/lp user %player% permission unset freeze.plugin world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /freeze <player>:
+    permission: freeze.use.plugin
+    trigger:
+        if arg-1 is "%player%":
+            send "&cYou can't freeze yourself"
+        else:
+            if arg-1's world is "%player's world%":
+                set {freezed.%arg-1%.%player's world%} to "true"
+                send "&cFreezed &b%arg-1%"
+
+command /unfreeze <player>:
+    permission: freeze.use.plugin
+    trigger:
+        if arg-1 is set:
+            if arg-1's world is "%player's world%":
+                set {freezed.%arg-1%.%player's world%} to "false"
+                send "&cUn-Freezed &b%arg-1%"
+
+on any move:
+    if {freezed.%player%.%player's world%} is "true":
+        cancel event
+        send "&cYou are freezed!"

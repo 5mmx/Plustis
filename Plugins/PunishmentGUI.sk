@@ -1,0 +1,48 @@
+#PunishmentGUI
+
+command /installp_punishmentgui:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.punishmentgui.%player's world%} to "Installed"
+            send "&3Plugin &bPunishmentGUI &3installed"
+            make console execute command "/lp user %player% permission set punish.plugin world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /uninstallp_punishmentgui:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.punishmentgui.%player's world%} to "Not Installed"
+            send "&3Plugin &bPunishmentGUI &3uninstalled"
+            make console execute command "/lp user %player% permission unset punish.plugin world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /punish [<player>]:
+    permission: punish.plugin
+    trigger:
+        if arg-1 is set:
+            wait 0.3 seconds
+            open chest with 1 row named "&3PunishmentGUI &7(%arg-1%)" to player
+            format slot 2 of player with lime wool named "&aKick" to close then run [make player execute command "pkick %arg-1% Kicked by %player%"]
+            format slot 4 of player with redstone block named "&cBan" to close then run [make player execute command "pban %arg-1% Banned by %player%"]
+            format slot 6 of player with paper named "&eWarn" with lore "  ", "&3%arg-1%'s warns: &b%{warns.%arg-1%.%player's world%}%/3" and "  " to close then run [make player execute command "pwarn %arg-1% Warned by %player%"]
+        else:
+            set {num.punish.%player%} to -1
+            open chest inventory with 6 rows named "PunishmentGUI > Select a Player" to player
+            loop all players:
+                if loop-player's world is "%player's world%":
+                    add 1 to {num.punish.%player%}
+                    set slot {num.punish.%player%} of player's current inventory to loop-player's skull named "%loop-value%"
+            set slot 49 of player's current inventory to compass named "Close"
+
+on inventory click:
+    if inventory name of player's current inventory is "PunishmentGUI > Select a Player":
+        if event-slot is compass named "Close":
+            cancel event
+            close player's inventory
+        else:
+            if event-slot is set:
+                cancel event
+                close player's inventory
+                make player execute command "/punish %event-slot's name%"

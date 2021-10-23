@@ -1,0 +1,19 @@
+#ImageOnMap
+
+command /installp_imageonmap:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.imageonmap.%player's world%} to "Installed"
+            send "&3Plugin &bImageOnMap &3installed"
+            make console execute command "/lp user %player% permission set imageonmap.new world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /uninstallp_imageonmap:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.imageonmap.%player's world%} to "Not Installed"
+            send "&3Plugin &bImageOnMap &3uninstalled"
+            make console execute command "/lp user %player% permission unset imageonmap.new world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"

@@ -1,0 +1,37 @@
+#WorldGuard
+
+command /installp_worldguard:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.worldguard.%player's world%} to "Installed"
+            send "&3Plugin &bWorldGuard &3installed"
+            make console execute command "/lp user %player% permission set worldguard.region.bypass.%player's world% world=%player's world%"
+            make console execute command "/lp user %player% permission set worldguard.region.wand world=%player's world%"
+            make console execute command "/lp user %player% permission set worldguard.region.define world=%player's world%"
+            make console execute command "/lp user %player% permission set worldguard.region.unlimited world=%player's world%"
+            wait 3 seconds
+            make console execute command "/lp user %player% permission set worldguard.region.flag.* world=%player's world%"
+            make console execute command "/lp user %player% permission set worldguard.region.addmember.* world=%player's world%"
+            make console execute command "/lp user %player% permission set worldguard.region.removemember.* world=%player's world%"
+            make console execute command "/lp user %player% permission set worldguard.region.claim world=%player's world%"
+            make console execute command "/lp user %player% permission set worldguard.region.remove.* world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /uninstallp_worldguard:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.worldguard.%player's world%} to "Not Installed"
+            send "&3Plugin &bWorldGuard &3uninstalled"
+            make console execute command "/lp user %player% permission unset worldguard.region.bypass.%player's world% world=%player's world%"
+            make console execute command "/lp user %player% permission unset worldguard.region.wand world=%player's world%"
+            make console execute command "/lp user %player% permission unset worldguard.region.define world=%player's world%"
+            make console execute command "/lp user %player% permission unset worldguard.region.unlimited world=%player's world%"
+            wait 3 seconds
+            make console execute command "/lp user %player% permission unset worldguard.region.flag.* world=%player's world%"
+            make console execute command "/lp user %player% permission unset worldguard.region.addmember.* world=%player's world%"
+            make console execute command "/lp user %player% permission unset worldguard.region.removemember.* world=%player's world%"
+            make console execute command "/lp user %player% permission unset worldguard.region.claim world=%player's world%"
+            make console execute command "/lp user %player% permission unset worldguard.region.remove.* world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"

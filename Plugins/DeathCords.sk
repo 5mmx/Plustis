@@ -1,0 +1,27 @@
+#DeathCords
+
+command /installp_deathcords:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.deathcords.%player's world%} to "Installed"
+            send "&3Plugin &bDeathCords &3installed"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /uninstallp_deathcords:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.deathcords.%player's world%} to "Not Installed"
+            send "&3Plugin &bDeathCords &3uninstalled"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+on death:
+    if {plugin.deathcords.%player's world%} is "Installed":
+        set {death.cords.%player%.%player's world%} to player's location
+
+on respawn:
+    if {plugin.deathcords.%player's world%} is "Installed":
+        wait 1 second
+        send "&cYou died at cords &e%{death.cords.%player%.%player's world%}%" to player
+        clear {death.cords.%player%.%player's world%}

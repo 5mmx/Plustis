@@ -1,0 +1,23 @@
+#WorldEdit
+
+command /installp_worldedit:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.worldedit.%player's world%} to "Installed"
+            send "&3Plugin &bWorldEdit &3installed"
+            make console execute command "/lp user %player% permission set worldedit.* world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /uninstallp_worldedit:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.worldedit.%player's world%} to "Not Installed"
+            send "&3Plugin &bWorldEdit &3uninstalled"
+            make console execute command "/lp user %player% permission set worldedit.* world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command //limit:
+    trigger:
+        send "&cno bruh"

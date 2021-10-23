@@ -1,0 +1,161 @@
+#Kits
+
+command /installp_kits:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.kits.%player's world%} to "Installed"
+            send "&3Plugin &bKits &3installed"
+            make console execute command "/lp user %player% permission set kits.see.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission set kits.set.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission set kits.1.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission set kits.2.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission set kits.3.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission set kits.4.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission set kits.5.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission set kits.6.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission set kits.7.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission set kits.8.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission set kits.9.plugin world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /uninstallp_kits:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.kits.%player's world%} to "Not Installed"
+            send "&3Plugin &bKits &3uninstalled"
+            make console execute command "/lp user %player% permission unset kits.see.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission unset kits.set.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission unset kits.1.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission unset kits.2.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission unset kits.3.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission unset kits.4.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission unset kits.5.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission unset kits.6.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission unset kits.7.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission unset kits.8.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission unset kits.9.plugin world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /kits:
+    permission: kits.see.plugin
+    trigger:
+        open chest with 1 row named "&3Kits" to player
+        format slot 0 of player with paper named "%{kit1.%player's world%}%" to close then run [make player execute command "pkit1 1"]
+        format slot 1 of player with paper named "%{kit2.%player's world%}%" to close then run [make player execute command "pkit2 2"]
+        format slot 2 of player with paper named "%{kit3.%player's world%}%" to close then run [make player execute command "pkit3 3"]
+        format slot 3 of player with paper named "%{kit4.%player's world%}%" to close then run [make player execute command "pkit4 4"]
+        format slot 4 of player with paper named "%{kit5.%player's world%}%" to close then run [make player execute command "pkit5 5"]
+        format slot 5 of player with paper named "%{kit6.%player's world%}%" to close then run [make player execute command "pkit6 6"]
+        format slot 6 of player with paper named "%{kit7.%player's world%}%" to close then run [make player execute command "pkit7 7"]
+        format slot 7 of player with paper named "%{kit8.%player's world%}%" to close then run [make player execute command "pkit8 8"]
+        format slot 8 of player with paper named "%{kit9.%player's world%}%" to close then run [make player execute command "pkit9 9"]
+
+command /setkit <text> [<text>]:
+    permission: kits.set.plugin
+    usage: /setkit <slot (1-9)> <name>
+    trigger:
+        if arg-1 is set:
+            if arg-1 is "1", "2", "3", "4", "5", "6", "7", "8", "9" or "join":
+                if arg-2 is set:
+                    set {kit%arg-1%.%player's world%} to arg-2
+                    send "&aCreated kit &b%arg-2% &afrom your inventory"
+                    set {_num} to 0
+                    loop 36 times:
+                        set {kit%arg-1%.%player's world%::%{_num}%} to slot {_num} of player's inventory
+                        add 1 to {_num}
+                else:
+                    send "Usage: /setkit <slot (1-9)> <name>"
+            else:
+                send "Usage: /setkit <slot (1-9)> <name>"
+        else:
+            send "Usage: /setkit <slot (1-9)> <name>"
+
+command /pkit1 <text>:
+    permission: kits.1.plugin
+    trigger:
+        set {_num} to 0
+        loop 36 times:
+            set slot {_num} of player's inventory to {kit%arg-1%.%player's world%::%{_num}%}
+            add 1 to {_num}
+        send "&aKit equipped!"
+
+command /pkit2 <text>:
+    permission: kits.2.plugin
+    trigger:
+        set {_num} to 0
+        loop 36 times:
+            set slot {_num} of player's inventory to {kit%arg-1%.%player's world%::%{_num}%}
+            add 1 to {_num}
+        send "&aKit equipped!"
+
+command /pkit3 <text>:
+    permission: kits.3.plugin
+    trigger:
+        set {_num} to 0
+        loop 36 times:
+            set slot {_num} of player's inventory to {kit%arg-1%.%player's world%::%{_num}%}
+            add 1 to {_num}
+        send "&aKit equipped!"
+
+command /pkit4 <text>:
+    permission: kits.4.plugin
+    trigger:
+        set {_num} to 0
+        loop 36 times:
+            set slot {_num} of player's inventory to {kit%arg-1%.%player's world%::%{_num}%}
+            add 1 to {_num}
+        send "&aKit equipped!"
+
+command /pkit5 <text>:
+    permission: kits.5.plugin
+    trigger:
+        set {_num} to 0
+        loop 36 times:
+            set slot {_num} of player's inventory to {kit%arg-1%.%player's world%::%{_num}%}
+            add 1 to {_num}
+        send "&aKit equipped!"
+
+command /pkit6 <text>:
+    permission: kits.6.plugin
+    trigger:
+        set {_num} to 0
+        loop 36 times:
+            set slot {_num} of player's inventory to {kit%arg-1%.%player's world%::%{_num}%}
+            add 1 to {_num}
+        send "&aKit equipped!"
+
+command /pkit7 <text>:
+    permission: kits.7.plugin
+    trigger:
+        set {_num} to 0
+        loop 36 times:
+            set slot {_num} of player's inventory to {kit%arg-1%.%player's world%::%{_num}%}
+            add 1 to {_num}
+        send "&aKit equipped!"
+
+command /pkit8 <text>:
+    permission: kits.8.plugin
+    trigger:
+        set {_num} to 0
+        loop 36 times:
+            set slot {_num} of player's inventory to {kit%arg-1%.%player's world%::%{_num}%}
+            add 1 to {_num}
+        send "&aKit equipped!"
+
+command /pkit9 <text>:
+    permission: kits.9.plugin
+    trigger:
+        set {_num} to 0
+        loop 36 times:
+            set slot {_num} of player's inventory to {kit%arg-1%.%player's world%::%{_num}%}
+            add 1 to {_num}
+        send "&aKit equipped!"
+
+command /pkitjoin <text>:
+    trigger:
+        set {_num} to 0
+        loop 36 times:
+            set slot {_num} of player's inventory to {kit%arg-1%.%player's world%::%{_num}%}
+            add 1 to {_num}

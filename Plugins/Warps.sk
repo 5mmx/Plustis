@@ -1,0 +1,64 @@
+#Warps
+#By Revurb
+
+command /installp_warps:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.warps.%player's world%} to "Installed"
+            send "&3Plugin &bWarps &3installed"
+            make console execute command "/lp user %player% permission set warp.use.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission set warp.set.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission set warp.list.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission set warp.del.plugin world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+ 
+command /uninstallp_warps:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.warps.%player's world%} to "Not Installed"
+            send "&3Plugin &bWarps &3uninstalled"
+            make console execute command "/lp user %player% permission unset warp.use.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission unset warp.set.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission unset warp.list.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission unset warp.del.plugin world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /setwarp <text>:
+	permission: warp.set.plugin
+	trigger:
+		make console execute command "/lp user %player% permission set essentials.setwarp world=%player's world%"
+		wait 1 second
+		make console execute command "supersudo %player% /essentials:setwarp %player's world%_warp_%arg-1%"
+		add "%player's world%_warp_%arg-1%" to {warps.essentials.%player's world%::*} 
+		wait 1 second
+		make console execute command "/lp user %player% permission unset essentials.setwarp world=%player's world%"
+		add arg-1 to {warplist.%player's world%::*}
+		send "&bSet warp &9%arg-1% &bto your position" to player
+
+
+command /warp <text>:
+	permission: warp.use.plugin
+	trigger:
+		if {warplist.%player's world%::*} contains arg-1:
+			make console execute command "essentials:warp %player's world%_warp_%arg-1% %player%"
+			send "&aTeleported!"
+		else:
+			send "&cWarp not found :/"
+
+command /warps:
+	permission: warp.list.plugin
+	trigger:
+		send "&bWarps: &3%{warplist.%player's world%::*}%" to player
+
+command /delwarp <text>:
+	permission: warp.del.plugin
+	trigger:
+		if {warplist.%player's world%::*} contains arg-1:
+			remove arg-1 from {warplist.%player's world%::*}
+			make console execute command "essentials:delwarp %player's world%_warp_%arg-1%"
+			remove "%player's world%_warp_%arg-1%" from {warps.essentials.%player's world%::*}
+			send "&aWarp deleted!"
+		else:
+			send "&cNo such warp" to player

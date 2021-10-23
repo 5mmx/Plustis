@@ -1,0 +1,24 @@
+#VoidSpawn
+
+command /installp_voidspawn:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.voidspawn.%player's world%} to "Installed"
+            send "&3Plugin &bVoidSpawn &3installed"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /uninstallp_voidspawn:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.voidspawn.%player's world%} to "Not Installed"
+            send "&3Plugin &bVoidSpawn &3uninstalled"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+
+on damage:
+    if victim is a player:
+        if damage was caused by void:
+            if {plugin.voidspawn.%victim's world%} is "Installed":
+                make victim execute command "/spawn"

@@ -1,0 +1,22 @@
+#Duplicator
+
+command /installp_duplicator:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.duplicator.%player's world%} to "Installed"
+            send "&3Plugin &bDuplicator &3installed"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /uninstallp_duplicator:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.duplicator.%player's world%} to "Not Installed"
+            send "&3Plugin &bDuplicator &3uninstalled"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /dupe:
+    trigger:
+        if {plugin.duplicator.%player's world%} is "Installed":
+            give player's tool to player

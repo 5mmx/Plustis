@@ -1,0 +1,33 @@
+﻿#NearbyPlayers
+
+command /installp_nearbyplayers:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.nearbyplayers.%player's world%} to "Installed"
+            send "&3Plugin &bNearbyPlayers &3installed"
+            make console execute command "/lp user %player% permission set setradius.nearby world=%player's world%"
+            make console execute command "/lp user %player% permission set nearby.use world=%player's world%"
+            set {nearby.radius.%player's world%} to 50
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /uninstallp_nearbyplayers:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.nearbyplayers.%player's world%} to "Not Installed"
+            send "&3Plugin &bNearbyPlayers &3uninstalled"
+            make console execute command "/lp user %player% permission unset setradius.nearby world=%player's world%"
+            make console execute command "/lp user %player% permission unset nearby.use world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /nearby-radius <number>:
+    trigger:
+        if player has permission "setradius.nearby":
+            set {nearby.radius.%player's world%} to arg-1
+
+command /nearby:
+    permission: nearby.use
+    trigger:
+        loop all players in radius {nearby.radius.%player's world%} around player:
+            message "&aPlayer: &e%loop-player% &aDistance: &e%distance between player and loop-player% &eblocks"

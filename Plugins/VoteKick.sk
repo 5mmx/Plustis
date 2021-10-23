@@ -1,0 +1,42 @@
+#VoteKick
+
+command /installp_votekick:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.VoteKick.%player's world%} to "Installed"
+            send "&3Plugin &bVoteKick &3installed"
+            make console execute command "/lp user %player% permission set votekick.use.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission set votekick.bypass.plugin world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+ 
+command /uninstallp_votekick:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.votekick.%player's world%} to "Not Installed"
+            send "&3Plugin &bVoteKick &3uninstalled"
+            make console execute command "/lp user %player% permission unset script.use.plugin world=%player's world%"
+            make console execute command "/lp user %player% permission unset votekick.bypass.plugin world=%player's world%"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /votekick <player> [<text>]:
+    usage: /votekick <player> <reason>
+    permission: votekick.use.plugin
+    trigger:
+        if {plugin.votekick.%player's world%} is "Installed":
+            if arg-1's world is "%player's world%":
+                if arg-1 has permission "votekick.bypass.plugin":
+                    send "&cThis player can't be kicked!"
+                else:
+                    send "&aVote sent!"
+                    broadcast "&3%player% &ahas voted to kick &3%arg-1% &afor: &3%arg-2%" to player's world
+                    broadcast "&bWant to votekick this player? Do &3/votekick %arg-1%"
+                    add 1 to {votekicks.%arg-1%.%player's world%}
+                    if {votekicks.%arg-1%.%player's world%} >= 3:
+                        make arg-1 execute command "lobby"
+                        send "&aYou have been kicked from this server: &r%colored arg-2%" to arg-1
+                        set {votekicks.%arg-1%.%player's world%} to 0
+                        broadcast "&cPlayer &3%arg-1% &chas been kicked!" to player's world
+            else:
+                send "&cThis player is not online in this server!"

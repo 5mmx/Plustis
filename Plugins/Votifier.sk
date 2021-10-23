@@ -1,0 +1,42 @@
+#Votifier
+
+command /installp_votifier:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.votifier.%player's world%} to "Installed"
+            send "&3Plugin &bVotifier &3installed"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+ 
+command /uninstallp_votifier:
+    trigger:
+        if player has permission "control.use":
+            set {plugin.votifier.%player's world%} to "Not Installed"
+            send "&3Plugin &bVotifier &3uninstalled"
+            wait 0.3 seconds
+            make player execute command "/pplugins"
+
+command /votifier [<text>]:
+    trigger:
+        if {plugin.votifier.%player's world%} is "Installed":
+            if player has permission "control.use":
+                if arg-1 is not set:
+                    send "&cUsage: &3/votifier <add/remove/clear>"
+                    send "&bUse the command above to add/remove a prize. To add one, simply hold an item and do the command"
+                if arg-1 is "add":
+                    if player's tool is not air:
+                        add player's tool to {Prizes.%player's world%::*}
+                        send "&aItem added to the prizes!"
+                    else:
+                        send "&cYou must hold something to do this!"
+                if arg-1 is "remove":
+                    if player's tool is not air:
+                        remove player's tool from {Prizes.%player's world%::*}
+                        send "&aItem removed from the prizes!"
+                    else:
+                        send "&cYou must hold something to do this!"
+                if arg-1 is "clear":
+                    clear {Prizes.%player's world%::*}
+                    send "&aCleared the prize list"
+            else:
+                send "&cYou can't do this!"
