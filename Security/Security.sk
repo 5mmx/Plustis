@@ -1,0 +1,255 @@
+#Plustis Security
+#Version: 0.2
+
+on join:
+        set {logged.in.%player%} to false
+        if {password.%player%} is set:
+                send "&aPlease log-in with &3/login <password>"
+                wait 30 seconds
+                if {2fa.%player%} is true:
+                    stop
+                else:
+                    if {logged.in.%player%} is false:
+                        kick player for "&cExpired time for Log-In"
+        else:
+                if {player::login::password::%player's uuid%} is set:
+                        set {password.%player%} to {player::login::password::%player's uuid%}
+                        send "&cYour old password has been automatically imported to the new Security System."
+                        send "&aPlease log-in with &3/login <password>"
+                else:
+                        send "  " to player
+                        send "&aHello and Welcome on &bPlustis!" to player
+                        send "  " to player
+                        send "&cPlease type &b/register <password> <password> &cto register" to player
+                        send "&cPlease chose a secure password, possibly not one that you use often" to player
+                        send "  " to player
+
+every 5 seconds:
+    set {now.time.security} to "%now formatted human-readable%"
+
+on any move:
+    if {logged.in.%player%} is false:
+        if {customip.destination.%player%} is not set:
+            cancel event
+        if {password.%player%} is set:
+            send "&cPlease type &3/login <password> &cto log-in"
+        else:
+            send "&cPlease type &3/register <password> <password> &cto log-in"
+
+on chat:
+    if message contains "/":
+        stop
+    else:
+        if {logged.in.%player%} is false:
+            cancel event
+        else:
+            stop
+
+on command:
+    if {logged.in.%player%} is false:
+        if command is "/login", "/register" or "/resetpassword":
+            #
+        else if command is "/join":
+            wait 3 seconds
+            clear {customip.destination.%player%}
+        else:
+            cancel event
+            if {password.%player%} is set:
+                send "&cPlease type &3/login <password> &cto log-in"
+            else:
+                send "&cPlease type &3/register <password> <password> &cto log-in"
+
+command /register <text> <text>:
+    usage: /register <password> <password>
+    trigger:
+        if {password.%player%} is not set:
+            send "&aCreating account..."
+            send "&c(Please do not quit!)"
+            wait 1 second
+            if arg-1 is arg-2:
+                set {password.%player%} to arg-1
+                set {logged.in.%player%} to true
+                send "&cRegistration successful!"
+                send "[**REGISTER**] %player% has registered" to channel with id "730902890692214824" with "MainBot"
+                add "&cAction &4> &bRegistration &3[&b%{now.time.security}%]" to {security.logs.%player%::*}
+            else:
+                send "&cThese passwords don't match!"
+                send "&cUsage: &3/register <password> <password>"
+        else:
+            send "&cYou are already registered!"
+
+command /login <text>:
+    usage: /login <password>
+    trigger:
+        if {password.%player%} is set:
+            if arg-1 is {password.%player%}:
+                send "&aSuccessfully logged-in!"
+                send "[**LOG-IN**] %player% has logged-in" to channel with id "730902890692214824" with "MainBot"
+                add "&cAction &4> &bLog-in &3[&b%{now.time.security}%]" to {security.logs.%player%::*}
+                if {2fa.%player%} is true:
+                    send "&aGenerating 2fa code..." to player
+                    clear {2fa.code.%player%}
+                    set {2fa.code.%player%} to "2fa-"
+                    set {char::*} to "a", "b", "c", "d", "e", "f", "g", "h", "i", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "z", "1", "2", "3", "4", "5", "6", "7", "8", "9" and "0"
+                    wait 1 second
+                    loop 5 times:
+                        set {2fa.code.%player%} to "%{2fa.code.%player%}%%random element out of {char::*}%"
+                    wait 1 second
+                    send "&aCode generated: &3%{2fa.code.%player%}%"
+                    send "&aPlease go to our discord &3(/discord) &ain &3##2fa-codes"
+                    send "&aand type &3!verify %player% %{2fa.code.%player%}%"
+                    send "&c(Code expires in 30 seconds!)"
+                    wait 30 seconds
+                    clear {2fa.code.%player%}
+                    send "&c2-FA Code expired!"
+                    if {logged.in.%player%} is false:
+                        make console execute command "kick %player% 2FA Code Expired"
+                else:
+                    set {logged.in.%player%} to true
+            else:
+                send "&cIncorrect password!"
+                send "&cType &3/resetpassword &cto reset your password"
+                send "[**LOG-IN**] %player% has tried to log-in ***POSSIBLE ACCOUNT THEFT***" to channel with id "730902890692214824" with "MainBot"
+                add "&cAction &4> &bLog-in (Failed) &3[&b%{now.time.security}%]" to {security.logs.%player%::*}
+        else:
+            send "&cPlease type &3/register <password> <password>"
+
+command /resetpassword <text>:
+    usage: /resetpassword <reason>
+    trigger:
+        send "&aRequest sent!"
+        send "&cPlease note that it might take up to &324 hours &cfor the request to be dealt with"
+        send "[**RESET-PASSWORD**] %player% has requested a password reset *(React to this to mark the request as solved!)*" to channel with id "730902948732993536" with "MainBot"
+        add "&cAction &4> &bRequested Reset &3[&b%{now.time.security}%]" to {security.logs.%player%::*}
+
+command /?resetpassword <offline player>:
+    permission: admin.rank
+    trigger:
+        if {players::*} contains arg-1:
+            send "&cPassword reset!"
+            clear {password.%arg-1%}
+        else:
+            send "&cThis player never joined!"
+
+command /changepassword <text> <text> <text>:
+    usage: /changepassword <current-password> <new-password> <new-password>
+    trigger:
+        if {password.%player%} is set:
+            if {logged.in.%player%} is true:
+                if arg-1 is {password.%player%}:
+                    if arg-2 is arg-3:
+                        send "&cChanging password..."
+                        send "&c(Please don't quit!)"
+                        wait 5 seconds
+                        set {password.%player%} to arg-2
+                        send "&aPassword changed!"
+                        send "[**PASSWORD CHANGE**] %player% has changed his password successfully" to channel with id "730902890692214824" with "MainBot"
+                        add "&cAction &4> &bPassword Changed &3[&b%{now.time.security}%]" to {security.logs.%player%::*}
+                    else:
+                        send "&cThese passwords don't match!"
+                else:
+                    send "&cThis isn't your current password!"
+            else:
+                send "&cYou must be logged-in!"
+        else:
+            send "&cPlease register with /register <password> <password>"
+
+command /security:
+    trigger:
+        if player's world is "Lobby":
+            wait 0.3 seconds
+            open chest with 2 row named "&3Security" to player
+            format slot 4 of player with player's head named "&aAccount" with lore "&3Username: &b%player%" and "&3Password: &b%{password.%player%}%" to close
+            format slot 12 of player with redstone block named "&cChange Password" to close then run [make player execute command "/changepassword"]
+            format slot 14 of player with tnt named "&cAdvanced Security" to close then run [make player execute command "/?security_advanced"]
+
+command /?security_advanced:
+    trigger:
+        wait 0.3 seconds
+        open chest with 2 row named "&3Security > Advanced" to player
+        format slot 13 of player with compass named "&eBack" to close then run [make player execute command "/security"]
+        format slot 3 of player with paper named "&aSecurity - Logs" to close then run [make player execute command "/?security_advanced_logs"]
+        if {2fa.%player%} is true:
+            format slot 5 of player with lime dye named "&a2FA" to close then run [make player execute command "/?security_advanced_2fa"]
+        else:
+            format slot 5 of player with gray dye named "&a2FA" to close then run [make player execute command "/?security_advanced_2fa"]
+
+command /?security_advanced_logs:
+    trigger:
+        if player's world is "Lobby":
+            wait 0.3 seconds
+            set {lnum.%player%} to -1
+            open chest with 6 row named "&3Security > Advanced > Logs" to player
+            format slot 47 of player with lime wool named "&aChange Password" to close then run [make player execute command "changepassword"]
+            format slot 49 of player with compass named "&eBack" to close then run [make player execute command "?security_advanced"]
+            format slot 51 of player with red wool named "&aClear Logs" to close then run [make player execute command "/?psecurity_clear"]
+            if size of {security.logs.%player%::*} <= 44:
+                loop {security.logs.%player%::*}:
+                    add 1 to {lnum.%player%}
+                    format slot {lnum.%player%} of player with paper named "&3%loop-value%" to close
+            else:
+                loop {security.logs.%player%::*}:
+                    add 1 to {lnum.%player%}
+                    format slot {lnum.%player%} of player with paper named "&3%loop-value%" to close
+                    if loop-index parsed as integer = 44:
+                        stop loop
+                format slot 44 of player with book named "&b..." with lore "&cPlease clear the logs to see further logs" to close 
+
+command /?psecurity_clear:
+    trigger:
+        clear {security.logs.%player%::*}
+        make player execute command "?security_advanced_logs"
+
+command /?security_advanced_2fa:
+    trigger:
+        if {2fa.%player%} is true:
+            send "&aDisabling &32FA&a..." to player
+            wait 2 seconds
+            set {2fa.%player%} to false
+            send "&32FA &aDisabled!"
+        else:
+            send "&aEnabling &32FA&a..."
+            send "&c(Please don't quit!)"
+            wait 3 seconds
+            send "&aGenerating 2fa code..." to player
+            clear {2fa.code.%player%}
+            set {2fa.code.%player%} to "2fa-"
+            set {char::*} to "a", "b", "c", "d", "e", "f", "g", "h", "i", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "z", "1", "2", "3", "4", "5", "6", "7", "8", "9" and "0"
+            wait 1 second
+            loop 5 times:
+                set {2fa.code.%player%} to "%{2fa.code.%player%}%%random element out of {char::*}%"
+            wait 1 second
+            send "&aCode generated: &3%{2fa.code.%player%}%"
+            send "&aPlease go to our discord &3(/discord) &ain &3##2fa-codes"
+            send "&aand type &3!verify %player% %{2fa.code.%player%}%"
+            send "&c(Code expires in 30 seconds!)"
+            wait 30 seconds
+            clear {2fa.code.%player%}
+            send "&c2-FA Code expired!"
+
+discord command verify <text> <text>:
+    usage: !verify <your-username> <code>
+    prefixes: !
+    executable in: guild
+    trigger:
+        if discord id of event-channel is "731108277919940670":
+            if {2fa.code.%arg-1%} is set:
+                if arg-2 is {2fa.code.%arg-1%}:
+                    send "**[:white_check_mark:]** Successfully logged-in **[:white_check_mark:]**" to channel with id "731108277919940670" with "MainBot"
+                    loop all players:
+                        if {2fa.code.%loop-player%} is arg-2:
+                            if {2fa.%loop-player%} is true:
+                                if {discord.id.%loop-player%} is "%discord id of event-member%":
+                                    set {logged.in.%loop-player%} to true
+                                    send "&aSuccessfully verified the account! You can now play!" to loop-player
+                                else:
+                                    send "&cError: error(119282)" to loop-player
+                            else:
+                                set {discord.id.%loop-player%} to "%discord id of event-member%"
+                                set {logged.in.%loop-player%} to true
+                                set {2fa.%loop-player%} to true
+                                send "&aSuccessfully verified the account! You can now play!" to loop-player
+                else:
+                    send "**[:x:]** Invalid Code **[:x:]**" to channel with id "731108277919940670" with "MainBot"
+            else:
+                send "**[:x:]** Error: You don't have any code generated **[:x:]**" to channel with id "731108277919940670" with "MainBot"
